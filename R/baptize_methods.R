@@ -18,11 +18,22 @@ baptize_with_scmap <- function(sce,
 }
 
 
-baptize_with_singleR <- function() {
+baptize_with_singleR <- function(sce, verbose = false) {
 
-  # query:
+  # query: ideally SCE
 
   # ref: should be a SummarizedExperiment
 
   # various other inputs can be specified
+
+  # return: sce with annotation column
 }
+
+baptize_with_celliD <- function() {
+
+   # query:
+
+  # ref:
+
+}
+
