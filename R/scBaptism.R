@@ -6,7 +6,7 @@
 scBaptism <- function(query_dataset,
                       reference_dataset,
                       marker_list,
-                      tools_to_use,
+                      tools_to_use
                       ) {
 
 
@@ -16,3 +16,7 @@ scBaptism <- function(query_dataset,
   return(sce_out)
 
 }
+
+
+
+##test,test test

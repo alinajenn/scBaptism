@@ -37,3 +37,5 @@ baptize_with_celliD <- function() {
 
 }
 
+
+baptize_with_SCINA <- function() {}
