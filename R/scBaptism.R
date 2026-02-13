@@ -5,7 +5,7 @@
 
 scBaptism <- function(query_dataset,
                       reference_dataset,
-                      marker_list,
+                      markers_list,
                       tools_to_use
                       ) {
 

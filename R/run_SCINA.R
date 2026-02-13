@@ -1,10 +1,10 @@
 #' run_SCINA
 #'
-#' @param sce_query
-#' @param markers_list
+#' @param sce_query SCE to be annotated
+#' @param markers_list List of marker genes
 #'
 #'
-#' @return sce_query : a SingleCellExperiment object, with the extra info on the
+#' @returns description sce_query : a SingleCellExperiment object, with the extra info on the
 #' annotated cells
 #'
 #' @export
@@ -72,11 +72,12 @@ run_SCINA <- function(sce_query,
                            ...)
 
   # 3) RETURN: add SCINA annotation & probabilities column to SCE
-  colData(sce_query)$scb_SCINA_res <- anno_res$cell_labels
+  SummarizedExperiment::colData(sce_query)$scb_SCINA_labels <- anno_res$cell_labels
 
   #probablities are calculated by SCINA
-  colData(sce_query)$scb_SCINA_prob <- anno_res$probabilities
+  SummarizedExperiment::colData(sce_query)$scb_SCINA_prob <- anno_res$probabilities
 
+  message("SCINA annotation done")
   return(sce_query)
 
 }
