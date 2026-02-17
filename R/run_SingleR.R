@@ -1,4 +1,4 @@
-#' run_xx
+#' run_SinlgeR
 #'
 #' @param sce_query SCE object to be annotated
 #' @param reference SCE object that acts as a reference
@@ -15,9 +15,7 @@
 #'
 #' @examples
 #'
-#' #############example not yet complete
 #' library(iUSEiSEE)
-#' library(Seurat)
 #' library(dplyr)
 #'
 #'
@@ -28,7 +26,7 @@
 #' )
 #'
 #' #using the labels_main of the example to run another annotation with SingleR
-#' run_SingleR(test = sce_annotated, reference = sce_annotated, ref_labels = sce_annotated$labels_main)
+#' sce_query <- run_SingleR(sce_query = sce_annotated, reference = sce_annotated, ref_labels = sce_annotated$labels_main)
 #'
 #' # plot the existing annotation with scater(t-SNE)
 #' scater::plotTSNE(sce_annotated, color_by = "labels_main")
@@ -40,7 +38,7 @@ run_SingleR <- function(sce_query, #SummarizedExperiment
                         ref_labels,#List or column of your SCE etc
                         return_extra_info = FALSE,
                         verbose = FALSE,
-                        ...)
+                      ...)
 
 {
 
@@ -49,14 +47,15 @@ run_SingleR <- function(sce_query, #SummarizedExperiment
 
   # transformation --------------------------------------------------------
   #ref needs to be normalized and log-transformed
-  #query: sce
+  #query: sce is accepted as input
 
-  #labels <- sce_query$ref_labels
+  #labels column from sce or list, no transformation needed
 
   # running annotation-----------------------------------------------------
   SingleR_res <- SingleR::SingleR(test = sce_query,
                                 ref = reference,
-                                labels = ref_labels
+                                labels = ref_labels,
+                                ...
                                 )
 
   # return input SCE with new annotation-----------------------------------
@@ -76,7 +75,6 @@ run_SingleR <- function(sce_query, #SummarizedExperiment
 
 
   #sce_out add to this sce
-
   if(verbose) message("SingleR annotation done")
   return(sce_query)
 
