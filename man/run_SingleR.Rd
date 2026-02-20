@@ -2,41 +2,53 @@
 % Please edit documentation in R/run_SingleR.R
 \name{run_SingleR}
 \alias{run_SingleR}
-\title{run_xx}
+\title{run_SinlgeR}
 \usage{
-run_SingleR(sce_query, reference, ref_labels, extra_data = TRUE, ...)
+run_SingleR(
+  sce_query,
+  reference,
+  ref_labels,
+  return_extra_info = FALSE,
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{sce_query}{SCE object to be annotated}
 
 \item{reference}{SCE object that acts as a reference}
 
-\item{ref_labels}{List of gene labels or column from the refernces colData}
+\item{ref_labels}{List of gene labels or column from the references colData}
 }
 \value{
 sce_query : a SingleCellExperiment object, with the extra info on the
 annotated cells
 }
 \description{
-run_xx
+run_SinlgeR
 }
 \examples{
 
-#############exsample not yet complete
 library(iUSEiSEE)
-library(Seurat)
 library(dplyr)
 
 
 # load SCE from iuseisee
 
 sce_annotated <- readRDS(
- file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE")
+  file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE")
 )
 
+#using the labels_main of the example to run another annotation with SingleR
+sce_query <- run_SingleR(sce_query = sce_annotated, reference = sce_annotated, ref_labels = sce_annotated$labels_main)
+
 # plot the existing annotation with scater(t-SNE)
-scater::plotTSNE(sce_annotated, color_by = "labels_main")
+scater::plotTSNE(sce_annotated, color_by = "scb_SingleR_res")
 
 
+}
+\seealso{
+Other reference-based family: 
+\code{\link{run_seurat}()}
 }
 \concept{reference-based family}

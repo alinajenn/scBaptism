@@ -4,18 +4,37 @@
 \alias{run_seurat}
 \title{run_Seurat}
 \usage{
-run_seurat(sce_query)
+run_seurat(sce_query, reference, ref_labels, n_pcs = 30, ...)
 }
 \arguments{
-\item{sce_query}{SCE to be annotated
-param}
+\item{sce_query}{SCE to be annotated}
+
+\item{reference}{SCE with the reference for the annotation}
 }
 \value{
 sce_query : a SingleCellExperiment object, with the extra info on the
 annotated cells
-
-export
 }
 \description{
 run_Seurat
 }
+\examples{
+
+#loading example dataset
+library(iUSEiSEE)
+
+sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
+
+
+sce_annotated <- run_seurat(sce_query = sce_annotated, reference = sce_annotated, ref_labels = "labels_main")
+
+#tSNE plot of the result
+scater::plotTSNE(sce_annotated, color_by = "labels_main")
+
+
+}
+\seealso{
+Other reference-based family: 
+\code{\link{run_SingleR}()}
+}
+\concept{reference-based family}

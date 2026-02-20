@@ -3,6 +3,8 @@
 #' @param sce_query SCE object to be annotated
 #' @param reference SCE object that acts as a reference
 #' @param ref_labels List of gene labels or column from the references colData
+#' @param return_extra_info if TRuE, adds additional metadata from the annotation (delta.next, scores, prunded.labels)
+#' @param verbose display message after annotation is finished
 #'
 #'
 #' @returns sce_query : a SingleCellExperiment object, with the extra info on the
@@ -29,7 +31,7 @@
 #' sce_query <- run_SingleR(sce_query = sce_annotated, reference = sce_annotated, ref_labels = sce_annotated$labels_main)
 #'
 #' # plot the existing annotation with scater(t-SNE)
-#' scater::plotTSNE(sce_annotated, color_by = "labels_main")
+#' scater::plotTSNE(sce_annotated, color_by = "scb_SingleR_res")
 #'
 #'
 #'@family reference-based family
