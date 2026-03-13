@@ -44,6 +44,9 @@
 #'# run the annotation
 #'run_SCINA(sce_query = sce_annotated, markers_list =  markers_lists)
 #'
+#' # plot the existing annotation with scater(t-SNE)
+#' scater::plotTSNE(sce_annotated, color_by = "scb_SCINA_labels")
+#'
 #' @family marker family
 
 

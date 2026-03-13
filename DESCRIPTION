@@ -15,8 +15,13 @@ Imports:
     SCINA,
     CIA,
     Seurat,
-    SingleR
+    SingleR,
+    SeuratObject,
+    magrittr
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    iUSEiSEE,
+    dplyr,
+    scater
 VignetteBuilder: knitr

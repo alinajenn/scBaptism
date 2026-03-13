@@ -31,16 +31,16 @@
 #' sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 #'
 #'
-#' sce_annotated <- run_seurat(sce_query = sce_annotated, reference = sce_annotated, ref_labels = "labels_main")
+#' sce_annotated <- run_Seurat(sce_query = sce_annotated, reference = sce_annotated, ref_labels = "labels_main")
 #'
 #' #tSNE plot of the result
-#' scater::plotTSNE(sce_annotated, color_by = "labels_main")
+#' scater::plotTSNE(sce_annotated, color_by = "scb_Seurat_labels")
 #'
 #'
 #'@family reference-based family
 run_Seurat <- function(sce_query, #SCE
                        reference, #SCE with labels
-                       ref_labels,#name of annotation column of SCE
+                       ref_labels,# string name of annotation column of SCE
                        n_pcs = 30, # 30 is the default from Seurat
                        verbose = FALSE,
                        ...)
@@ -72,7 +72,7 @@ run_Seurat <- function(sce_query, #SCE
 
 
   # return input SCE with new annotation-----------------------------------
-  SummarizedExperiment::colData(sce_query)$scb_Seurat_res <- seurat_res$predicted.id
+  SummarizedExperiment::colData(sce_query)$scb_Seurat_labels <- seurat_res$predicted.id
 
 
   if (return_extra_info){

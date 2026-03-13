@@ -9,13 +9,22 @@ run_CIA(
   markers_list,
   similarity_threshold = 0,
   column_name = "scb_CIA_res",
-  n_cpus = 1
+  n_cpus = 1,
+  verbose = FALSE
 )
 }
 \arguments{
 \item{sce_query}{SCE to be annotated}
 
 \item{markers_list}{List of marker genes}
+
+\item{column_name}{name of the column that contains the final annotation}
+
+\item{n_cpus}{number of cpu cores used}
+
+\item{verbose}{display message after annotation is finished}
+
+\item{similarity_theshold}{threshold whether the highest score is significantly higher than others}
 }
 \value{
 sce_query : a SingleCellExperiment object, with the extra info on the
@@ -23,6 +32,23 @@ annotated cells
 }
 \description{
 run_CIA
+}
+\examples{
+
+library(iUSEiSEE)
+
+# load SCE from iuseisee
+
+sce_annotated <- readRDS(
+  file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE")
+)
+
+sce_query <- run_CIA(sce_query = sce_annotated, markers_list = sce_annotated$labels_main)
+
+# plot the existing annotation with scater(t-SNE)
+scater::plotTSNE(sce_annotated, color_by = "scb_CIA_labels")
+
+
 }
 \seealso{
 Other marker family: 

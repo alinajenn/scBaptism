@@ -24,8 +24,7 @@
 #' # load SCE from iuseisee
 #'
 #' sce_annotated <- readRDS(
-#'   file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE")
-#' )
+#'   file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 #'
 #' #using the labels_main of the example to run another annotation with SingleR
 #' sce_query <- run_SingleR(sce_query = sce_annotated, reference = sce_annotated, ref_labels = sce_annotated$labels_main)

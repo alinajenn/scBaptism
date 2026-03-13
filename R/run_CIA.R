@@ -2,7 +2,7 @@
 #'
 #' @param sce_query SCE to be annotated
 #' @param markers_list List of marker genes
-#' @param similarity_theshold threshold wether the highest score is significantly higher than others
+#' @param similarity_theshold threshold whether the highest score is significantly higher than others
 #' @param column_name name of the column that contains the final annotation
 #' @param n_cpus number of cpu cores used
 #' @param verbose display message after annotation is finished
@@ -24,10 +24,10 @@
 #'   file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE")
 #' )
 #'
-#' sce_query <- run_SingleR(sce_query = sce_annotated, markers_list = sce_annotated$labels_main)
+#' sce_query <- run_CIA(sce_query = sce_annotated, markers_list = sce_annotated$labels_main)
 #'
 #' # plot the existing annotation with scater(t-SNE)
-#' scater::plotTSNE(sce_annotated, color_by = "scb_CIA_res")
+#' scater::plotTSNE(sce_annotated, color_by = "scb_CIA_labels")
 #'
 #'
 #'@family marker family

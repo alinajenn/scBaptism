@@ -19,6 +19,10 @@ run_SingleR(
 \item{reference}{SCE object that acts as a reference}
 
 \item{ref_labels}{List of gene labels or column from the references colData}
+
+\item{return_extra_info}{if TRuE, adds additional metadata from the annotation (delta.next, scores, prunded.labels)}
+
+\item{verbose}{display message after annotation is finished}
 }
 \value{
 sce_query : a SingleCellExperiment object, with the extra info on the
@@ -49,6 +53,7 @@ scater::plotTSNE(sce_annotated, color_by = "scb_SingleR_res")
 }
 \seealso{
 Other reference-based family: 
-\code{\link{run_seurat}()}
+\code{\link{run_Seurat}()},
+\code{\link{run_clustifyr}()}
 }
 \concept{reference-based family}
