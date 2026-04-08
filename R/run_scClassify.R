@@ -21,10 +21,8 @@
 #'
 #' @examples
 #'
-#'
 #'library(iUSEiSEE)
 #'library(dplyr)
-#'
 #'# load SCE from iUSEiSEE
 #'
 #'sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
