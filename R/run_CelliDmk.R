@@ -12,7 +12,7 @@
 #'
 #'@importFrom CelliD RunCellHGT
 #'@importFrom CelliD RunMCA
-#'@importFrom SingeCellExperiment colData
+#'@importFrom SingleCellExperiment colData
 #'
 #' @examples
 #'

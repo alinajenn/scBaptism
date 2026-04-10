@@ -7,7 +7,7 @@
 run_scmap(
   sce_query,
   reference,
-  ref_labels,
+  ref_labs,
   return_extra_info = FALSE,
   verbose = FALSE,
   ...
@@ -18,7 +18,7 @@ run_scmap(
 
 \item{reference}{SCE object that acts as a reference}
 
-\item{ref_labels}{Column from the references colData}
+\item{ref_labs}{Column from the references colData}
 
 \item{return_extra_info}{if TRUE, adds additional metadata from the annotation}
 
@@ -27,37 +27,33 @@ run_scmap(
 \value{
 sce_query a SingleCellExperiment object, with the extra info on the
 annotated cells
-
-export
 }
 \description{
 run_scmap
 }
 \examples{
 
-
 library(iUSEiSEE)
 library(Seurat)
 library(dplyr)
 
-
-# load SCE from iuseisee
+#load SCE from iuseisee
 
 sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 
-
-
 #run the annotation
-#sce_annotated <- run_scmap(sce_annotated, markers_lists)
+#sce_annotated <- run_scmap(sce_query= sce_annotated, reference = sce_annotated, ref_labs = "labels_main)
 
-# plot the existing annotation with scater(t-SNE)
-scater::plotTSNE(sce_annotated, color_by = "labels_main")
+#plot the new annotations with scater(t-SNE)
+#cell wise annotation
+scater::plotTSNE(sce_annotated, color_by = "scb_scmap_labels")
 
+#cluster wise annotation
+scater::plotTSNE(sce_annotated, color_by = "scb_scmap_clusterlabels")
 
 }
 \seealso{
 Other classical machine learning family: 
-\code{\link{run_SingleCellNet}()},
 \code{\link{run_scPred}()}
 }
 \concept{classical machine learning family}
