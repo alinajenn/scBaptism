@@ -7,7 +7,6 @@
 #' @param verbose display message after annotation is finished
 #'
 #'
-#'
 #' @returns sce_query a SingleCellExperiment object, with the extra info on the
 #' annotated cells
 #'
@@ -21,6 +20,9 @@
 #' @importFrom scmap scmapCell
 #' @importFrom SummarizedExperiment rowData
 #' @importFrom SummarizedExperiment colData
+#' @importFrom SummarizedExperiment metadata
+#'
+#'
 #' @examples
 #'
 #' library(iUSEiSEE)
@@ -32,14 +34,14 @@
 #' sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 #'
 #' #run the annotation
-#' #sce_annotated <- run_scmap(sce_query= sce_annotated, reference = sce_annotated, ref_labs = "labels_main)
+#' sce_annotated <- run_scmap(sce_query= sce_annotated, reference = sce_annotated, ref_labs = "labels_main)
 #'
 #' #plot the new annotations with scater(t-SNE)
 #' #cell wise annotation
 #' scater::plotTSNE(sce_annotated, color_by = "scb_scmap_labels")
 #'
 #' #cluster wise annotation
-#'scater::plotTSNE(sce_annotated, color_by = "scb_scmap_clusterlabels")
+#' scater::plotTSNE(sce_annotated, color_by = "scb_scmap_clusterlabels")
 #'
 #'@family classical machine learning family
 run_scmap <- function(sce_query,
@@ -83,7 +85,7 @@ run_scmap <- function(sce_query,
   scmapCluster_results <- scmap::scmapCluster(
     projection = sce_query,
     index_list = list(
-      refinfo = metadata(reference)$scmap_cluster_index
+      refinfo = SingleCellExperiment::metadata(reference)$scmap_cluster_index
     )
   )
 

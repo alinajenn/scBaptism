@@ -2,7 +2,7 @@
 #'
 #' @param sce_query SCE to be annotated
 #' @param reference SCE with annotations
-#' @param ref_lab existing annotation in the reference
+#' @param ref_labs existing annotation in the reference
 #' @param return_extra_info if TRUE, adds additional metadata from the annotation
 #' @param verbose display message after annotation is finished
 #'
@@ -14,6 +14,7 @@
 #'@importFrom CelliD RunCellHGT
 #'@importFrom SummarizedExperiment colData
 #'@importFrom CelliD RunMCA
+#'@importFrom CelliD GetCellGeneSet
 #'
 #'
 #' @examples
@@ -36,7 +37,7 @@
 #'@family hybrid family
 run_CelliDref <- function(sce_query,
                        reference,
-                       ref_lab,
+                       ref_labs,
                        return_extra_info = FALSE,
                        verbose = FALSE,
                        ...)
@@ -49,39 +50,33 @@ run_CelliDref <- function(sce_query,
   # transformation --------------------------------------------------------
   #sce input would be fine, but some of the later functions depend on Seurat object
 
-  #reference:
+  #transform query and reference into seurat objects
 
   seurat_query <- Seurat::as.Seurat(sce_query)
   seurat_ref <- Seurat::as.Seurat(reference)
 
   # running annotation-----------------------------------------------------
 
-  #Restricting to protein-coding genes: Skipped for now
-  #Normalize & Scale Data with Seurat functions? Skipped for now
-  #RUN MCA: necessary for using the tool
-
+  #prepare query
 
   seurat_query <- Seurat::NormalizeData(seurat_query)
   seurat_query <- Seurat::FindVariableFeatures(seurat_query)
   seurat_query <- Seurat::ScaleData(seurat_query)
   seurat_query <- CelliD::RunMCA(seurat_query)
 
-  #prepare
-
-  #runs other dim reds (that we already have)
-
 
   #prepare ref
-  #extract per cell gene signatures
 
   seurat_ref <- Seurat::NormalizeData(seurat_ref)
   seurat_ref <- Seurat::ScaleData(seurat_ref, features = rownames(seurat_ref))
   seurat_ref <- CelliD::RunMCA(seurat_ref)
 
+  #extract per cell gene signatures
+
   ref_cell_gs <- CelliD::GetCellGeneSet(seurat_ref, dims = 1:50, n.features = 200)
 
 
-  #1 run reference version
+  # run reference based annotation of CelliD
 
   result_ref <- CelliD::RunCellHGT(seurat_query,
                                       pathways = ref_cell_gs,
@@ -93,12 +88,10 @@ run_CelliDref <- function(sce_query,
 
   # return input SCE with new annotation-----------------------------------
 
-
-
-  #for each cell, assess the signature with the lowest corrected p-value (max -log10 corrected p-value)
+  # for each cell, assess the signature with the lowest corrected p-value (max -log10 corrected p-value)
   ref_match <- rownames(result_ref)[apply(result_ref, 2, which.max)]
 
-  ref_prediction <- seurat_ref[[]][, ref_lab][ref_match]
+  ref_prediction <- seurat_ref[[]][ref_match, ref_labs]
 
 
   # for each cell, evaluate if the lowest p-value is significant
@@ -108,7 +101,7 @@ run_CelliDref <- function(sce_query,
   SummarizedExperiment::colData(sce_query)$scb_CelliDref_labels <- ref_prediction_signif
 
 
-  #message("CelliD annotation done")
+  # message("CelliD annotation done")
   if(verbose) message("CelliD annotation done")
 
   return(sce_query)

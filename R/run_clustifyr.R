@@ -2,7 +2,7 @@
 #'
 #' @param sce_query SCE to be annotated
 #' @param reference SCE object that acts as a reference
-#' @param ref_labels List of gene labels or column from the references colData
+#' @param ref_labs List of gene labels or column from the references colData
 #' @param verbose display message after annotation is finished
 #'
 #'
@@ -30,7 +30,7 @@
 #' #run the annotation
 #' sce_annotated <- run_clustifyr(sce_query = sce_annotated,
 #'                                reference = sce_annotated,
-#'                                ref_labels = "labels_main")
+#'                                ref_labs = "labels_main")
 #'
 #' #plot the existing annotation with scater(t-SNE)
 #' scater::plotTSNE(sce_annotated, color_by = "scb_clustifyr_labels")
@@ -40,7 +40,7 @@
 #'
 run_clustifyr <- function(sce_query,
                           reference,
-                          ref_labels, #string of name of annotation column of SCE
+                          ref_labs, #string of name of annotation column of SCE
                           verbose = FALSE,
                           ...)
 
@@ -57,7 +57,7 @@ run_clustifyr <- function(sce_query,
 
   transf_ref <- clustifyr::object_ref(
     input = reference,
-    cluster_col = ref_labels # they call it cluster_col, but ask for cell identities
+    cluster_col = ref_labs # they call it cluster_col, but ask for cell identities
   )
 
 
@@ -66,7 +66,7 @@ run_clustifyr <- function(sce_query,
   sce_query <- clustifyr::clustify(
     input = sce_query, # an SCE object
     ref_mat = transf_ref, # matrix of RNA-seq expression data for each cell type
-    cluster_col = ref_labels, # name of column in meta.data containing cell clusters
+    cluster_col = ref_labs, # name of column in meta.data containing cell clusters
     obj_out = TRUE, # output SCE object with cell type inserted as "type" column
     ...)
 

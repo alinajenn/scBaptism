@@ -34,7 +34,7 @@
 run_CIA <- function(sce_query,
                     markers_list, #markers input (list)
                     similarity_threshold = 0, #is highest score significantly higher? If not then cell=unassigned
-                    column_name = "scb_CIA_res", #name of metadata column, default = CIA_Prediction
+                    column_name = "scb_CIA_labels", #name of metadata column, default = CIA_Prediction, do not modify if you want it to fit our scheme
                     n_cpus = 1, # number of cpu cores, default
                     verbose = FALSE)
 
@@ -65,7 +65,8 @@ run_CIA <- function(sce_query,
 
   # return sce with new annotation -----------------------------
 
-  # no input needed, adding annotation to SCE is done by CIA_Classify already
+  #adding annotation column to SCE is done by CIA_classify already
+
 
   if (verbose) message("CIA annotation done")
   return(sce_query)

@@ -55,7 +55,7 @@ run_CelliDmk <- function(sce_query,
   sce_query <- CelliD::RunMCA(sce_query)
 
 
-  # run marker based CelliS version
+  # run marker based CelliD version
 
   result_marker <- CelliD::RunCellHGT(sce_query,
                               pathways = markers_list,

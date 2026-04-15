@@ -50,6 +50,14 @@ run_scClassify <- function(sce_query,
 
 {
 
+  # checks -----------------------------------------------------------------------
+
+  #are the logcounts called logcounts?
+
+  if(!("logcounts" %in% names(assays(sce_query)))) {
+    stop("no assay called 'logcounts' found. Rename your assay or calculate the logcounts.")
+  }
+
   # transformation ----------------------------------------------------------------
 
   #take logcount matrices from reference & query

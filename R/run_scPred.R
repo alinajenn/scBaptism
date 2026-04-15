@@ -2,7 +2,7 @@
 #'
 #' @param sce_query SCE to be annotated
 #' @param reference SCE object that acts as a reference
-#' @param ref_labels Column from the references colData
+#' @param ref_labs Column from the references colData
 #' @param return_extra_info if TRUE, adds additional metadata from the annotation
 #' @param verbose display message after annotation is finished
 #'
@@ -37,7 +37,7 @@
 #'sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 #'
 #'#run the annotation
-#'#sce_annotated <- run_scPred(sce_query = sce_annotated, reference = sce_annotated, ref_labels = "labels_main")
+#'#sce_annotated <- run_scPred(sce_query = sce_annotated, reference = sce_annotated, ref_labs = "labels_main")
 #'
 #'# plot the existing annotation with scater(t-SNE)
 #'scater::plotTSNE(sce_annotated, color_by = "scb_scPred_labels")
@@ -46,7 +46,7 @@
 #'@family classical machine learning family
 run_scPred <- function(sce_query,
                        reference,
-                       ref_lab,
+                       ref_labs,
                        threshold = 0.55,
                        max.iter.harmony = 20,
                        recompute_alignment = TRUE,
@@ -84,7 +84,7 @@ run_scPred <- function(sce_query,
 
   #train classifier
 
-  seurat_ref <- scPred::getFeatureSpace(seurat_ref, ref_lab)
+  seurat_ref <- scPred::getFeatureSpace(seurat_ref, ref_labs)
 
   seurat_ref <- scPred::trainModel(seurat_ref)
 

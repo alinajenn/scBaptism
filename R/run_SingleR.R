@@ -30,13 +30,13 @@
 #' sce_query <- run_SingleR(sce_query = sce_annotated, reference = sce_annotated, ref_labels = sce_annotated$labels_main)
 #'
 #' # plot the existing annotation with scater(t-SNE)
-#' scater::plotTSNE(sce_annotated, color_by = "scb_SingleR_res")
+#' scater::plotTSNE(sce_annotated, color_by = "scb_SingleR_labels")
 #'
 #'
 #'@family reference-based family
 run_SingleR <- function(sce_query, #SummarizedExperiment
                         reference, #SummarizedExperiment
-                        ref_labels,#List or column of your SCE etc
+                        ref_labs,#name of column in ref SCE
                         return_extra_info = FALSE,
                         verbose = FALSE,
                       ...)
@@ -50,12 +50,14 @@ run_SingleR <- function(sce_query, #SummarizedExperiment
   #ref needs to be normalized and log-transformed
   #query: sce is accepted as input
 
-  #labels column from sce or list, no transformation needed
+  #extract labels column from sce
+
+  labels_col <- colData(reference)[[ref_labs]]
 
   # running annotation-----------------------------------------------------
   SingleR_res <- SingleR::SingleR(test = sce_query,
                                 ref = reference,
-                                labels = ref_labels,
+                                labels = labels_col,
                                 ...
                                 )
 
@@ -71,8 +73,6 @@ run_SingleR <- function(sce_query, #SummarizedExperiment
     SummarizedExperiment::colData(sce_query)$scb_SingleR_scores <- SingleR_res$scores
     SummarizedExperiment::colData(sce_query)$scb_SingleR_prunded.labels <- SingleR_res$prunded.lables
   }
-
-
 
 
   #sce_out add to this sce

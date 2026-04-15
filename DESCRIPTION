@@ -17,7 +17,9 @@ Imports:
     Seurat,
     SingleR,
     SeuratObject,
-    magrittr
+    magrittr,
+    clustifyr,
+    scPred
 Suggests: 
     knitr,
     rmarkdown,
