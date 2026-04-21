@@ -2,7 +2,7 @@
 #'
 #' @param sce_query SCE to be annotated
 #' @param markers_list List of marker genes
-#' @param similarity_theshold threshold whether the highest score is significantly higher than others
+#' @param similarity_threshold threshold whether the highest score is significantly higher than others
 #' @param column_name name of the column that contains the final annotation
 #' @param n_cpus number of cpu cores used
 #' @param verbose display message after annotation is finished
@@ -17,6 +17,8 @@
 #' @examples
 #'
 #' library(iUSEiSEE)
+#' library(Seurat)
+#' library(dplyr)
 #'
 #' # load SCE from iuseisee
 #'
@@ -24,7 +26,22 @@
 #'   file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE")
 #' )
 #'
-#' sce_query <- run_CIA(sce_query = sce_annotated, markers_list = sce_annotated$labels_main)
+#' # get the markers list using Seurat
+#' myseu <- Seurat::as.Seurat(sce_annotated)
+#' myseu <- Seurat::ScaleData(myseu)
+#' Seurat::Idents(myseu) <- "labels_main"
+#'
+#' seu_all_markers <- Seurat::FindAllMarkers(myseu, test.use = "wilcox", only.pos = TRUE,
+#'                                          min.pct = 0.25, logfc.threshold = 0.25)
+#'
+#' top_k_markers <- 50
+#'
+#' markers_lists <- seu_all_markers %>%
+#'  dplyr::group_by(cluster) %>%
+#'  dplyr::top_n(n = top_k_markers, wt = avg_log2FC)
+#' markers_lists <- split(markers_lists$gene, markers_lists$cluster)
+#'
+#' sce_annotated <- run_CIA(sce_query = sce_annotated, markers_list = markers_lists)
 #'
 #' # plot the existing annotation with scater(t-SNE)
 #' scater::plotTSNE(sce_annotated, color_by = "scb_CIA_labels")
@@ -34,7 +51,6 @@
 run_CIA <- function(sce_query,
                     markers_list, #markers input (list)
                     similarity_threshold = 0, #is highest score significantly higher? If not then cell=unassigned
-                    column_name = "scb_CIA_labels", #name of metadata column, default = CIA_Prediction, do not modify if you want it to fit our scheme
                     n_cpus = 1, # number of cpu cores, default
                     verbose = FALSE)
 
@@ -48,12 +64,10 @@ run_CIA <- function(sce_query,
 
   #input as SCE is accepted
 
-  #signatures_input should be "a list where each element is a vector of gene names with names of the list elements representing signature names"
-
-
-
-
   # running annotation -----------------------------------------
+
+  #hard-code column name so it will fit with the scBaptism naming conventions
+  column_name = "scb_CIA_labels"
 
 
   sce_query <- CIA::CIA_classify(data = sce_query,

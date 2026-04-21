@@ -4,16 +4,26 @@
 \alias{run_Seurat}
 \title{run_Seurat}
 \usage{
-run_Seurat(sce_query, reference, ref_labels, n_pcs = 30, verbose = FALSE, ...)
+run_Seurat(
+  sce_query,
+  reference,
+  ref_labs,
+  n_pcs = 30,
+  return_extra_info = FALSE,
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{sce_query}{SCE to be annotated}
 
 \item{reference}{SCE with the reference for the annotation}
 
-\item{ref_labels}{of the column of the reference, that contains annotation information}
+\item{ref_labs}{of the column of the reference, that contains annotation information}
 
 \item{n_pcs}{number of PCs to compute on reference}
+
+\item{return_extra_info}{if TRUE, adds additional metadata from the annotation}
 
 \item{verbose}{display message after annotation is finished}
 }
@@ -32,7 +42,7 @@ library(iUSEiSEE)
 sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 
 
-sce_annotated <- run_Seurat(sce_query = sce_annotated, reference = sce_annotated, ref_labels = "labels_main")
+sce_annotated <- run_Seurat(sce_query = sce_annotated, reference = sce_annotated, ref_labs = "labels_main")
 
 #tSNE plot of the result
 scater::plotTSNE(sce_annotated, color_by = "scb_Seurat_labels")

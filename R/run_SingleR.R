@@ -2,8 +2,8 @@
 #'
 #' @param sce_query SCE object to be annotated
 #' @param reference SCE object that acts as a reference
-#' @param ref_labels List of gene labels or column from the references colData
-#' @param return_extra_info if TRuE, adds additional metadata from the annotation (delta.next, scores, prunded.labels)
+#' @param ref_labs List of gene labels or column from the references colData
+#' @param return_extra_info if TRUE, adds additional metadata from the annotation (delta.next, scores, prunded.labels)
 #' @param verbose display message after annotation is finished
 #'
 #'
@@ -27,7 +27,7 @@
 #'   file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 #'
 #' #using the labels_main of the example to run another annotation with SingleR
-#' sce_query <- run_SingleR(sce_query = sce_annotated, reference = sce_annotated, ref_labels = sce_annotated$labels_main)
+#' sce_query <- run_SingleR(sce_query = sce_annotated, reference = sce_annotated, ref_labs = sce_annotated$labels_main)
 #'
 #' # plot the existing annotation with scater(t-SNE)
 #' scater::plotTSNE(sce_annotated, color_by = "scb_SingleR_labels")

@@ -7,6 +7,8 @@
 run_SCINA(
   sce_query,
   markers_list,
+  return_extra_info = FALSE,
+  verbose = FALSE,
   max_iter = 1000,
   convergence_n = 12,
   convergence_rate = 0.999,
@@ -18,28 +20,30 @@ run_SCINA(
 \item{sce_query}{SCE to be annotated}
 
 \item{markers_list}{List of marker genes}
+
+\item{return_extra_info}{if TRUE, adds additional metadata from the annotation}
+
+\item{verbose}{display message after annotation is finished}
 }
 \value{
-description sce_query : a SingleCellExperiment object, with the extra info on the
+sce_query: a SingleCellExperiment object, with the extra info on the
 annotated cells
 }
 \description{
 run_SCINA
 }
 \examples{
-# load libraries
-
 library(iUSEiSEE)
 library(Seurat)
 library(dplyr)
 
 
-# load example SCE from iuseisee package
+#load example SCE from iUSEiSEE package
 
 sce_annotated <- readRDS(
  file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 
-# get the markers list
+#get the markers list using Seurat
 myseu <- Seurat::as.Seurat(sce_annotated)
 myseu <- Seurat::ScaleData(myseu)
 Seurat::Idents(myseu) <- "labels_main"
@@ -50,7 +54,7 @@ seu_all_markers <- Seurat::FindAllMarkers(myseu, test.use = "wilcox", only.pos =
 top_k_markers <- 50
 
 markers_lists <- seu_all_markers \%>\%
- group_by(cluster) \%>\%
+ dplyr::group_by(cluster) \%>\%
  dplyr::top_n(n = top_k_markers, wt = avg_log2FC)
 markers_lists <- split(markers_lists$gene, markers_lists$cluster)
 

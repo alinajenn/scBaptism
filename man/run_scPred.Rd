@@ -7,7 +7,7 @@
 run_scPred(
   sce_query,
   reference,
-  ref_lab,
+  ref_labs,
   threshold = 0.55,
   max.iter.harmony = 20,
   recompute_alignment = TRUE,
@@ -22,11 +22,11 @@ run_scPred(
 
 \item{reference}{SCE object that acts as a reference}
 
+\item{ref_labs}{Column from the references colData}
+
 \item{return_extra_info}{if TRUE, adds additional metadata from the annotation}
 
 \item{verbose}{display message after annotation is finished}
-
-\item{ref_labels}{Column from the references colData}
 }
 \value{
 sce_query a SingleCellExperiment object, with the extra info on the
@@ -48,7 +48,7 @@ library(dplyr)
 sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 
 #run the annotation
-#sce_annotated <- run_scPred(sce_query = sce_annotated, reference = sce_annotated, ref_labels = "labels_main")
+#sce_annotated <- run_scPred(sce_query = sce_annotated, reference = sce_annotated, ref_labs = "labels_main")
 
 # plot the existing annotation with scater(t-SNE)
 scater::plotTSNE(sce_annotated, color_by = "scb_scPred_labels")

@@ -8,7 +8,6 @@ run_CIA(
   sce_query,
   markers_list,
   similarity_threshold = 0,
-  column_name = "scb_CIA_res",
   n_cpus = 1,
   verbose = FALSE
 )
@@ -18,13 +17,13 @@ run_CIA(
 
 \item{markers_list}{List of marker genes}
 
-\item{column_name}{name of the column that contains the final annotation}
+\item{similarity_threshold}{threshold whether the highest score is significantly higher than others}
 
 \item{n_cpus}{number of cpu cores used}
 
 \item{verbose}{display message after annotation is finished}
 
-\item{similarity_theshold}{threshold whether the highest score is significantly higher than others}
+\item{column_name}{name of the column that contains the final annotation}
 }
 \value{
 sce_query : a SingleCellExperiment object, with the extra info on the
@@ -36,6 +35,8 @@ run_CIA
 \examples{
 
 library(iUSEiSEE)
+library(Seurat)
+library(dplyr)
 
 # load SCE from iuseisee
 
@@ -43,7 +44,22 @@ sce_annotated <- readRDS(
   file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE")
 )
 
-sce_query <- run_CIA(sce_query = sce_annotated, markers_list = sce_annotated$labels_main)
+# get the markers list using Seurat
+myseu <- Seurat::as.Seurat(sce_annotated)
+myseu <- Seurat::ScaleData(myseu)
+Seurat::Idents(myseu) <- "labels_main"
+
+seu_all_markers <- Seurat::FindAllMarkers(myseu, test.use = "wilcox", only.pos = TRUE,
+                                         min.pct = 0.25, logfc.threshold = 0.25)
+
+top_k_markers <- 50
+
+markers_lists <- seu_all_markers \%>\%
+ dplyr::group_by(cluster) \%>\%
+ dplyr::top_n(n = top_k_markers, wt = avg_log2FC)
+markers_lists <- split(markers_lists$gene, markers_lists$cluster)
+
+sce_annotated <- run_CIA(sce_query = sce_annotated, markers_list = markers_lists)
 
 # plot the existing annotation with scater(t-SNE)
 scater::plotTSNE(sce_annotated, color_by = "scb_CIA_labels")

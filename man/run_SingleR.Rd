@@ -7,7 +7,7 @@
 run_SingleR(
   sce_query,
   reference,
-  ref_labels,
+  ref_labs,
   return_extra_info = FALSE,
   verbose = FALSE,
   ...
@@ -18,9 +18,9 @@ run_SingleR(
 
 \item{reference}{SCE object that acts as a reference}
 
-\item{ref_labels}{List of gene labels or column from the references colData}
+\item{ref_labs}{List of gene labels or column from the references colData}
 
-\item{return_extra_info}{if TRuE, adds additional metadata from the annotation (delta.next, scores, prunded.labels)}
+\item{return_extra_info}{if TRUE, adds additional metadata from the annotation (delta.next, scores, prunded.labels)}
 
 \item{verbose}{display message after annotation is finished}
 }
@@ -43,10 +43,10 @@ sce_annotated <- readRDS(
   file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 
 #using the labels_main of the example to run another annotation with SingleR
-sce_query <- run_SingleR(sce_query = sce_annotated, reference = sce_annotated, ref_labels = sce_annotated$labels_main)
+sce_query <- run_SingleR(sce_query = sce_annotated, reference = sce_annotated, ref_labs = sce_annotated$labels_main)
 
 # plot the existing annotation with scater(t-SNE)
-scater::plotTSNE(sce_annotated, color_by = "scb_SingleR_res")
+scater::plotTSNE(sce_annotated, color_by = "scb_SingleR_labels")
 
 
 }

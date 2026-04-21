@@ -1,10 +1,8 @@
 #' run_scClassify
 #'
 #' @param sce_query SCE to be annotated
-#' @param log_name_q string with name of log-normalized query data
 #' @param reference SCE object that acts as a reference
-#' @param log_name_r string with name of log-normalized reference data
-#' @param ref_labels Column from the references colData
+#' @param ref_labs Column from the references colData
 #' @param return_extra_info if TRUE, adds additional metadata from the annotation
 #' @param verbose display message after annotation is finished
 #'
@@ -21,28 +19,24 @@
 #'
 #' @examples
 #'
-#'library(iUSEiSEE)
-#'library(dplyr)
-#'# load SCE from iUSEiSEE
+#' library(iUSEiSEE)
+#' library(dplyr)
+#' # load SCE from iUSEiSEE
 #'
-#'sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
+#' sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 #'
-#'#run the annotation
-#'#sce_annotated <- run_scClassify(sce_query = sce_annotated,
-#'                                 log_name_q = "logcounts",
+#' # run the annotation
+#' sce_annotated <- run_scClassify(sce_query = sce_annotated,
 #'                                 reference = sce_annotated,
-#'                                 log_name_r = "logcounts",
 #'                                 ref_labs = "labels_main")
 #'
-#'# plot the existing annotation with scater(t-SNE)
-#'scater::plotTSNE(sce_annotated, color_by = "scb_scClassify_labels")
+#' # plot the existing annotation with scater(t-SNE)
+#' scater::plotTSNE(sce_annotated, color_by = "scb_scClassify_labels")
 #'
 #'
 #'@family reference family
 run_scClassify <- function(sce_query,
-                           log_name_q, #String name of the log normalized matrices (query)
                            reference,
-                           log_name_r,
                            ref_labs,
                            return_extra_info = FALSE,
                            verbose = FALSE,
@@ -62,8 +56,8 @@ run_scClassify <- function(sce_query,
 
   #take logcount matrices from reference & query
 
-  log_query <- SummarizedExperiment::assay(sce_query, log_name_q)
-  log_ref <- SummarizedExperiment::assay(reference, log_name_r)
+  log_query <- SummarizedExperiment::assay(sce_query, "logcounts")
+  log_ref <- SummarizedExperiment::assay(reference, "logcounts")
 
   #get the labels of the reference
 
@@ -117,7 +111,7 @@ run_scClassify <- function(sce_query,
   SummarizedExperiment::colData(sce_query)$scb_scClassify_labels <- anno_res$pearson_WKNN_limma$predRes
 
 
-  #message("xx annotation done")
+  #message
   if(verbose) message("scClassify annotation done")
 
   return(sce_query)

@@ -20,7 +20,6 @@
 #' @importFrom scmap scmapCell
 #' @importFrom SummarizedExperiment rowData
 #' @importFrom SummarizedExperiment colData
-#' @importFrom SummarizedExperiment metadata
 #'
 #'
 #' @examples
@@ -34,7 +33,7 @@
 #' sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 #'
 #' #run the annotation
-#' sce_annotated <- run_scmap(sce_query= sce_annotated, reference = sce_annotated, ref_labs = "labels_main)
+#' sce_annotated <- run_scmap(sce_query= sce_annotated, reference = sce_annotated, ref_labs = "labels_main")
 #'
 #' #plot the new annotations with scater(t-SNE)
 #' #cell wise annotation
@@ -81,16 +80,16 @@ run_scmap <- function(sce_query,
 
   # running annotations-----------------------------------------------------
 
-  #cluster-wise
+  #cluster-wise annotation
   scmapCluster_results <- scmap::scmapCluster(
     projection = sce_query,
     index_list = list(
-      refinfo = SingleCellExperiment::metadata(reference)$scmap_cluster_index
+      refinfo = metadata(reference)$scmap_cluster_index
     )
   )
 
 
-  #cell-wise
+  #cell-wise annotation
 
   #index reference cell wise
 
@@ -120,13 +119,10 @@ run_scmap <- function(sce_query,
   SummarizedExperiment::colData(sce_query)[["scb_scmap_labels"]] <- scmapCell_clusters$scmap_cluster_labs[,'refinfo']
 
 
-#  if(return_extra_info){
- #   SummarizedExperiment::colData(sce_query)$scb_scmap_cluster_siml <- scmapCluster_results$scmap_cluster_siml
-  #  SummarizedExperiment::colData(sce_query)$scb_scmap_combined_labels <- scmapCluster_results$combined_labs
-
-   # SummarizedExperiment::colData(sce_query)$scb_scmap_combined_labels <- scmapCell_clusters$combined_labs
-    #SummarizedExperiment::colData(sce_query)$scb_scmap_combined_labels <- scmapCell_clusters$combined_labs
-  #}
+  if(return_extra_info){
+    SummarizedExperiment::colData(sce_query)$scb_scmap_cluster_siml <- scmapCluster_results$scmap_cluster_siml
+    SummarizedExperiment::colData(sce_query)$scb_scmap_cell_siml <- scmapCell_clusters$scmap_cluster_siml
+  }
 
   #message
   if(verbose) message("scmap annotation done")

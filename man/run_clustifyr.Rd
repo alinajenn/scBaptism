@@ -4,14 +4,14 @@
 \alias{run_clustifyr}
 \title{run_clustifyr}
 \usage{
-run_clustifyr(sce_query, reference, ref_labels, verbose = FALSE, ...)
+run_clustifyr(sce_query, reference, ref_labs, verbose = FALSE, ...)
 }
 \arguments{
 \item{sce_query}{SCE to be annotated}
 
 \item{reference}{SCE object that acts as a reference}
 
-\item{ref_labels}{List of gene labels or column from the references colData}
+\item{ref_labs}{List of gene labels or column from the references colData}
 
 \item{verbose}{display message after annotation is finished}
 }
@@ -37,7 +37,7 @@ sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", packag
 #run the annotation
 sce_annotated <- run_clustifyr(sce_query = sce_annotated,
                                reference = sce_annotated,
-                               ref_labels = "labels_main")
+                               ref_labs = "labels_main")
 
 #plot the existing annotation with scater(t-SNE)
 scater::plotTSNE(sce_annotated, color_by = "scb_clustifyr_labels")

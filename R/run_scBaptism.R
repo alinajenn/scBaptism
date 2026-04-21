@@ -5,7 +5,6 @@
 #' @param markers_list list of marker genes
 #' @param reference SingleCellExperiment object with annotation information column
 #' @param ref_labs name of column with annotation information
-#' @param name description
 #' @param return_extra_info if TRUE, adds additional metadata from the annotation when available
 #' @param verbose display message after each annotation is finished
 #'
@@ -15,9 +14,7 @@
 #'
 #' @export
 #'
-#' @importFrom
 #'
-#' examples
 #'
 #'
 #'
@@ -28,8 +25,6 @@ run_scBaptism <- function(sce_query,
                           markers_list,
                           reference,
                           ref_labs,
-                          log_name_r,
-                          log_name_q,
                           verbose = FALSE,
                           return_extra_info = FALSE,
                           ...)
@@ -52,7 +47,7 @@ run_scBaptism <- function(sce_query,
   'Seurat' = sce_query <- run_Seurat(sce_query = sce_query, reference = reference, ref_labs = ref_labs),
   'clustifyr' = sce_query <- run_clustifyr(sce_query = sce_query, reference = reference, ref_labs = ref_labs),
   'scPred' = sce_query <- run_scPred(sce_query = sce_query, reference = reference, ref_labs = ref_labs),
-  'scClassify' = sce_query <- run_scClassify(sce_query = sce_query, log_name_r = log_name_r, log_name_q = log_name_q, reference = reference, ref_labs = ref_labs),
+  'scClassify' = sce_query <- run_scClassify(sce_query = sce_query, reference = reference, ref_labs = ref_labs),
   'scmap' = sce_query <- run_scmap(sce_query = sce_query, reference = reference, ref_labs = ref_labs),
   'CelliDref' = sce_query <- run_CelliDref(sce_query = sce_query, reference = reference, ref_labs = ref_labs)
   )

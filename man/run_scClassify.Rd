@@ -6,9 +6,7 @@
 \usage{
 run_scClassify(
   sce_query,
-  log_name_q,
   reference,
-  log_name_r,
   ref_labs,
   return_extra_info = FALSE,
   verbose = FALSE,
@@ -18,11 +16,7 @@ run_scClassify(
 \arguments{
 \item{sce_query}{SCE to be annotated}
 
-\item{log_name_q}{string with name of log-normalized query data}
-
 \item{reference}{SCE object that acts as a reference}
-
-\item{log_name_r}{string with name of log-normalized reference data}
 
 \item{return_extra_info}{if TRUE, adds additional metadata from the annotation}
 
@@ -45,11 +39,9 @@ library(dplyr)
 
 sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 
-#run the annotation
-#sce_annotated <- run_scClassify(sce_query = sce_annotated,
-                                log_name_q = "logcounts",
+# run the annotation
+sce_annotated <- run_scClassify(sce_query = sce_annotated,
                                 reference = sce_annotated,
-                                log_name_r = "logcounts",
                                 ref_labs = "labels_main")
 
 # plot the existing annotation with scater(t-SNE)

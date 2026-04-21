@@ -7,7 +7,7 @@
 run_CelliDref(
   sce_query,
   reference,
-  ref_lab,
+  ref_labs,
   return_extra_info = FALSE,
   verbose = FALSE,
   ...
@@ -18,7 +18,7 @@ run_CelliDref(
 
 \item{reference}{SCE with annotations}
 
-\item{ref_lab}{existing annotation in the reference}
+\item{ref_labs}{existing annotation in the reference}
 
 \item{return_extra_info}{if TRUE, adds additional metadata from the annotation}
 
@@ -35,7 +35,6 @@ run_CelliDref
 }
 \examples{
 
-
 library(iUSEiSEE)
 library(dplyr)
 
@@ -43,8 +42,8 @@ library(dplyr)
 
 sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 
-#run the annotation
-#sce_annotated <- run_tool(sce_annotated, markers_lists)
+# run the annotation
+sce_annotated <- run_tool(sce_annotated, markers_lists)
 
 # plot the existing annotation with scater(t-SNE)
 scater::plotTSNE(sce_annotated, color_by = "scb_CelliDref_labels")

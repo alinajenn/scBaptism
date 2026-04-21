@@ -2,7 +2,7 @@
 #'
 #' @param sce_query SCE to be annotated
 #' @param markers_list List of marker genes
-#' @param return_extra_info if TRuE, adds additional metadata from the annotation (delta.next, scores, prunded.labels)
+#' @param return_extra_info if TRUE, adds additional metadata from the annotation
 #' @param verbose display message after annotation is finished
 #'
 #'
@@ -61,6 +61,10 @@ run_SCINA <- function(sce_query,
                       ...) {
 
   # checks ----------------------------------------------------------------
+
+  if(!hasArg(sce_query)) {
+    stop("please provide a query")
+  }
 
   #do logcounts exist and are called logcounts?
 

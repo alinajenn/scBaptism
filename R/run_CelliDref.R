@@ -11,27 +11,26 @@
 #'
 #' export
 #'
-#'@importFrom CelliD RunCellHGT
-#'@importFrom SummarizedExperiment colData
-#'@importFrom CelliD RunMCA
-#'@importFrom CelliD GetCellGeneSet
+#' @importFrom CelliD RunCellHGT
+#' @importFrom SummarizedExperiment colData
+#' @importFrom CelliD RunMCA
+#' @importFrom CelliD GetCellGeneSet
 #'
 #'
 #' @examples
 #'
+#' library(iUSEiSEE)
+#' library(dplyr)
 #'
-#'library(iUSEiSEE)
-#'library(dplyr)
+#' # load SCE from iUSEiSEE
 #'
-#'# load SCE from iUSEiSEE
+#' sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 #'
-#'sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
+#' # run the annotation
+#' sce_annotated <- run_CelliDref(sce_annotated, markers_lists)
 #'
-#'#run the annotation
-#'#sce_annotated <- run_tool(sce_annotated, markers_lists)
-#'
-#'# plot the existing annotation with scater(t-SNE)
-#'scater::plotTSNE(sce_annotated, color_by = "scb_CelliDref_labels")
+#' # plot the existing annotation with scater(t-SNE)
+#' scater::plotTSNE(sce_annotated, color_by = "scb_CelliDref_labels")
 #'
 #'
 #'@family hybrid family
