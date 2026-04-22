@@ -60,17 +60,6 @@ run_SCINA <- function(sce_query,
                       sensitivity_cutoff = 0.9,
                       ...) {
 
-  # checks ----------------------------------------------------------------
-
-  if(!hasArg(sce_query)) {
-    stop("please provide a query")
-  }
-
-  #do logcounts exist and are called logcounts?
-
-  if(!("logcounts" %in% names(assays(sce_query)))) {
-    stop("no assay called 'logcounts' found. Rename your assay or calculate the logcounts.")
-  }
 
   # transformation --------------------------------------------------------
 

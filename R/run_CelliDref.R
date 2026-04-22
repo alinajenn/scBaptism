@@ -49,14 +49,14 @@ run_CelliDref <- function(sce_query,
   # transformation --------------------------------------------------------
   #sce input would be fine, but some of the later functions depend on Seurat object
 
-  #transform query and reference into seurat objects
+  #transform query and reference into Seurat objects
 
   seurat_query <- Seurat::as.Seurat(sce_query)
   seurat_ref <- Seurat::as.Seurat(reference)
 
   # running annotation-----------------------------------------------------
 
-  #prepare query
+  # prepare query
 
   seurat_query <- Seurat::NormalizeData(seurat_query)
   seurat_query <- Seurat::FindVariableFeatures(seurat_query)

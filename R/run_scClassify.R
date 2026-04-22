@@ -3,6 +3,7 @@
 #' @param sce_query SCE to be annotated
 #' @param reference SCE object that acts as a reference
 #' @param ref_labs Column from the references colData
+#' @param selectFeatures string vector deciding which methods to use for feature selection during training. Defaults to "limma", other options:"DV", "DD", "chisq", "BI", "Cepo"
 #' @param return_extra_info if TRUE, adds additional metadata from the annotation
 #' @param verbose display message after annotation is finished
 #'
@@ -21,6 +22,7 @@
 #'
 #' library(iUSEiSEE)
 #' library(dplyr)
+#'
 #' # load SCE from iUSEiSEE
 #'
 #' sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
@@ -38,6 +40,7 @@
 run_scClassify <- function(sce_query,
                            reference,
                            ref_labs,
+                           selectFeatures = c("limma"),
                            return_extra_info = FALSE,
                            verbose = FALSE,
                            ...)
@@ -54,7 +57,7 @@ run_scClassify <- function(sce_query,
 
   # transformation ----------------------------------------------------------------
 
-  #take logcount matrices from reference & query
+  #take logcounts matrices from reference & query
 
   log_query <- SummarizedExperiment::assay(sce_query, "logcounts")
   log_ref <- SummarizedExperiment::assay(reference, "logcounts")
@@ -100,7 +103,7 @@ run_scClassify <- function(sce_query,
                                  trainRes = classifier,
                                  cellTypes_test = NULL,
                                  algorithm = "WKNN",
-                                 features = c("limma"),
+                                 features = selectFeatures, #needs to be same as used for training above
                                  similarity = c("pearson"),
                                  prob_threshold = 0.7,
                                  verbose = FALSE)

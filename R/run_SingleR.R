@@ -39,7 +39,7 @@ run_SingleR <- function(sce_query, #SummarizedExperiment
                         ref_labs,#name of column in ref SCE
                         return_extra_info = FALSE,
                         verbose = FALSE,
-                      ...)
+                        ...)
 
 {
 
