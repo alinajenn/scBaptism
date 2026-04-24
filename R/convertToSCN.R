@@ -3,7 +3,10 @@
 #' extract sampTab and expDat sce object into regular S3 objects
 #' @param sce_object SCE object to be converted to SCN format
 #' @param exp_type type of assay data in the SCE (eg "counts", "logcounts", "normcounts" etc)
-
+#'
+#' @importFrom SingleCellExperiment counts logcounts normcounts
+#' colData
+#'
 #' @export
 #'
 #' @return list with sampTab (the metadata) and expDat (the expression matrix),

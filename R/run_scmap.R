@@ -12,15 +12,10 @@
 #'
 #' @export
 #'
-#' @importFrom scmap scmapCluster
-#' @importFrom scmap selectFeatures
-#' @importFrom scmap indexCell
-#' @importFrom scmap indexCluster
-#' @importFrom scmap scmapCell2Cluster
-#' @importFrom scmap scmapCell
-#' @importFrom SummarizedExperiment rowData
-#' @importFrom SummarizedExperiment colData
-#'
+#' @importFrom scmap scmapCluster selectFeatures indexCell
+#' indexCluster scmapCell2Cluster scmapCell
+#' @importFrom SummarizedExperiment rowData colData
+#' @importFrom S4Vectors metadata
 #'
 #' @examples
 #'

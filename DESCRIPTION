@@ -11,6 +11,8 @@ RoxygenNote: 7.3.3
 Imports:
     SingleCellExperiment,
     SummarizedExperiment,
+    methods,
+    S4Vectors,
     SCINA,
     CIA,
     Seurat,
