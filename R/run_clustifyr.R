@@ -3,14 +3,34 @@
 #' @param sce_query SCE to be annotated
 #' @param reference SCE object that acts as a reference
 #' @param ref_labs List of gene labels or column from the references colData
+#' @param query_genesnA vector of genes of interest to compare. If NULL, then common genes between the expr_mat and ref_mat will be used for comparision.
+#' @param n_genes number of genes limit for Seurat variable genes, by default 1000, set to 0 to use all variable genes (generally not recommended)
+#' @param per_cell if true run per cell, otherwise per cluster.
+#' @param n_perm number of permutations, set to 0 by default
+#' @param compute_method method(s) for computing similarity scores
+#' @param pseudobulk_method method used for summarizing clusters, options are mean (default), median, truncate (10% truncated mean), or trimean, max, min
+#' @param rm0	consider 0 as missing data, recommended for per_cell
+#' @param obj_out whether to output object instead of cor matrix
+#' @param seurat_out output cor matrix or called seurat object (deprecated, use obj_out instead)
+#' @param vec_out only output a result vector in the same order as metadata
+#' @param rename_prefix prefix to add to type and r column names
+#' @param threshold identity calling minimum correlation score threshold, only used when obj_out = TRUE
+#' @param low_threshold_cell option to remove clusters with too few cells
+#' @param exclude_genes a vector of gene names to throw out of query
+#' @param if_log input data is natural log, averaging will be done on unlogged data
+#' @param organism for GO term analysis, organism name: human - 'hsapiens', mouse - 'mmusculus'
+#' @param plot_name name for saved pdf, if NULL then no file is written (default)
+#' @param rds_name name for saved rds of rank_diff, if NULL then no file is written (default)
+#' @param expand_unassigned test all ref clusters for unassigned results
+#' @param use_var_genes if providing a seurat object, use the variable genes (stored in seurat_object@var.genes) as the query_genes.
+#' @param dr	stored dimension reduction
 #' @param verbose display message after annotation is finished
-#'
 #'
 #'
 #' @returns sce_query a SingleCellExperiment object, with the extra info on the
 #' annotated cells
 #'
-#' export
+#' @export
 #'
 #' @importFrom clustifyr clustify
 #' @importFrom clustifyr object_ref
@@ -40,9 +60,27 @@
 #'
 run_clustifyr <- function(sce_query,
                           reference,
-                          ref_labs, #string of name of annotation column of SCE
-                          verbose = FALSE,
-                          ...)
+                          ref_labs,
+                          query_genes = NULL,
+                          per_cell = FALSE,
+                          n_perm = 0,
+                          compute_method = "spearman",
+                          pseudobulk_method = "mean",
+                          dr = "umap",
+                          obj_out = TRUE,
+                          seurat_out = obj_out,
+                          vec_out = FALSE,
+                          threshold = "auto",
+                          rm0 = FALSE,
+                          rename_prefix = NULL,
+                          exclude_genes = c(),
+                          metadata = NULL,
+                          organism = "hsapiens",
+                          plot_name = NULL,
+                          rds_name = NULL,
+                          expand_unassigned = FALSE,
+                          verbose = FALSE
+                          )
 
 {
 
@@ -64,11 +102,28 @@ run_clustifyr <- function(sce_query,
   # running annotation-----------------------------------------------------
 
   sce_query <- clustifyr::clustify(
-    input = sce_query, # an SCE object
-    ref_mat = transf_ref, # matrix of RNA-seq expression data for each cell type
-    cluster_col = ref_labs, # name of column in meta.data containing cell clusters
-    obj_out = TRUE, # output SCE object with cell type inserted as "type" column
-    ...)
+    input = sce_query,
+    ref_mat = transf_ref,
+    cluster_col = ref_labs,
+    per_cell = per_cell,
+    n_perm = n_perm,
+    compute_method = compute_method,
+    pseudobulk_method = pseudobulk_method,
+    dr = dr,
+    obj_out = obj_out,
+    seurat_out = seurat_out,
+    vec_out = vec_out,
+    threshold = threshold,
+    rm0 = rm0,
+    rename_prefix = rename_prefix,
+    exclude_genes = exclude_genes,
+    metadata = metadata,
+    organism = organism,
+    plot_name = plot_name,
+    rds_name = rds_name ,
+    expand_unassigned = expand_unassigned,
+    verbose = verbose
+    )
 
 
   # return input SCE with new annotation-----------------------------------

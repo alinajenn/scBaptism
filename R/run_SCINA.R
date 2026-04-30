@@ -4,7 +4,13 @@
 #' @param markers_list List of marker genes
 #' @param return_extra_info if TRUE, adds additional metadata from the annotation
 #' @param verbose display message after annotation is finished
-#'
+#' @param max_iter max iterations allowed for EM algorithm
+#' @param convergence_n stop the SCINA algorithm if during the last n rounds of iterations, cell type assignment keeps steady above the convergence_rate
+#' @param convergence_rate percentage of cells for which the type assignment was stable for the last n rounds
+#' @param sensitivity_cutoff cutoff to remove signatures whose cells types are deemed as non-existent at all in the data by the SCINA algorithm
+#' @param allow_unknown if 1 unknown annotation is allowed, if 0 not allowed
+#' @param log_file name of log file, that stores infor about SCINA algorithm
+#' @param rm_overlap binary deciding whether shared symbols in the markers_list will be deleted
 #'
 #' @returns sce_query: a SingleCellExperiment object, with the extra info on the
 #' annotated cells
@@ -42,7 +48,7 @@
 #' markers_lists <- split(markers_lists$gene, markers_lists$cluster)
 #'
 #' # run the annotation
-#' run_SCINA(sce_query = sce_annotated, markers_list =  markers_lists)
+#' sce_annotated <- run_SCINA(sce_query = sce_annotated, markers_list =  markers_lists)
 #'
 #' # plot the existing annotation with scater(t-SNE)
 #' scater::plotTSNE(sce_annotated, color_by = "scb_SCINA_labels")
@@ -58,7 +64,10 @@ run_SCINA <- function(sce_query,
                       convergence_n = 12,
                       convergence_rate = 0.999,
                       sensitivity_cutoff = 0.9,
-                      ...) {
+                      rm_overlap = 1,
+                      allow_unknown = 1,
+                      log_file = 'SCINA.log'
+                      ) {
 
 
   # transformation --------------------------------------------------------
@@ -71,11 +80,14 @@ run_SCINA <- function(sce_query,
   # run annotation --------------------------------------------------------
   anno_res <- SCINA::SCINA(exp = transf_query,
                            signatures = markers_list,
-                           max_iter,
-                           convergence_n,
-                           convergence_rate,
-                           sensitivity_cutoff,
-                           ...)
+                           max_iter = max_iter,
+                           convergence_n = convrgence_n,
+                           convergence_rate = convergnce_rate,
+                           sensitivity_cutoff = sensitivty_cutoff,
+                           rm_overlap = rm_overlap,
+                           allow_unknown = allow_unknown,
+                           log_file = log_file
+                           )
 
   # return annotation ------------------------------------------------------
 
@@ -84,7 +96,8 @@ run_SCINA <- function(sce_query,
 
   #probablities are calculated by SCINA
   if(return_extra_info) {
-    SummarizedExperiment::colData(sce_query)$scb_SCINA_prob <- anno_res$probabilities}
+    SummarizedExperiment::colData(sce_query)$scb_SCINA_prob <- anno_res$probabilities
+    }
 
   if(verbose) message("SCINA annotation done")
   return(sce_query)

@@ -3,19 +3,23 @@
 #' @param sce_query SCE to be annotated
 #' @param reference SCE with annotations
 #' @param ref_labs existing annotation in the reference
+#' @param reduction name of the MCA reduction
+#' @param n.features integer of top n features to consider for hypergeometric test
+#' @param CelliD_features vector of features to calculate the gene ranking by default will take everything in the selected mca reduction.
+#' @param CelliD_dims MCA dimensions to use to compute n.features top genes.
+#' @param minSize minimum number of overlapping genes in geneset and
+#' @param log.trans if TRUE tranform the pvalue matrix with -log10 and convert it to sparse matrix
+#' @param p.adjust if TRUE apply Benjamini Hochberg correction to p-value
 #' @param return_extra_info if TRUE, adds additional metadata from the annotation
 #' @param verbose display message after annotation is finished
 #'
 #' @returns sce_query a SingleCellExperiment object, with the extra info on the
 #' annotated cells
 #'
-#' export
+#' @export
 #'
-#' @importFrom CelliD RunCellHGT
+#' @importFrom CelliD RunCellHGT GetCellGeneSet RunMCA
 #' @importFrom SummarizedExperiment colData
-#' @importFrom CelliD RunMCA
-#' @importFrom CelliD GetCellGeneSet
-#'
 #'
 #' @examples
 #'
@@ -27,7 +31,9 @@
 #' sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 #'
 #' # run the annotation
-#' sce_annotated <- run_CelliDref(sce_annotated, markers_lists)
+#' sce_annotated <- run_CelliDref(sce_query = sce_annotated,
+#'                                reference = sce_annotated,
+#'                                ref_labs = "labels_main")
 #'
 #' # plot the existing annotation with scater(t-SNE)
 #' scater::plotTSNE(sce_annotated, color_by = "scb_CelliDref_labels")
@@ -37,9 +43,16 @@
 run_CelliDref <- function(sce_query,
                        reference,
                        ref_labs,
+                       reduction = "MCA",
+                       n.features = 200,
+                       CelliD_features = NULL,
+                       CelliD_dims = seq(50),
+                       minSize = 10,
+                       log.trans = TRUE,
+                       p.adjust = TRUE,
                        return_extra_info = FALSE,
-                       verbose = FALSE,
-                       ...)
+                       verbose = FALSE
+                       )
 
 {
 
@@ -77,11 +90,16 @@ run_CelliDref <- function(sce_query,
 
   # run reference based annotation of CelliD
 
-  result_ref <- CelliD::RunCellHGT(seurat_query,
-                                      pathways = ref_cell_gs,
-                                      dims = 1:50,
-                                      n.features = 200
-  )
+  result_ref <- CelliD::RunCellHGT(X = seurat_query,
+                                  pathways = ref_cell_gs,
+                                  reduction = reduction,
+                                  n.features = n.features,
+                                  features = CelliD_features,
+                                  dims = CelliD_dims,
+                                  minSize = minSize,
+                                  log.trans = log.trans,
+                                  p.adjust = p.adjust
+                                  )
 
 
 

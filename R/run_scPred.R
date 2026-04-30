@@ -3,47 +3,45 @@
 #' @param sce_query SCE to be annotated
 #' @param reference SCE object that acts as a reference
 #' @param ref_labs Column from the references colData
+#' @param threshold Threshold used for probabilities to classify cells into classes. All cells below this threshold value will be labels as "unassigned".
+#' @param max.iter.harmony Maximum number of rounds to run Harmony. One round of Harmony involves one clustering and one correction step.
+#' @param recompute_alignment Recompute alignment: TRUE/FALSE. Useful if scPredict() has already been run
+#' @param seed Numeric seed for harmony
 #' @param return_extra_info if TRUE, adds additional metadata from the annotation
 #' @param verbose display message after annotation is finished
 #'
 #' @returns sce_query a SingleCellExperiment object, with the extra info on the
 #' annotated cells
 #'
-#' export
+#' @export
 #'
-#'@importFrom scPred scPredict
-#'@importFrom scPred getFeatureSpace
-#'@importFrom scPred trainModel
-#'@importFrom scPred get_scpred
-#'@importFrom SeuratObject RenameAssays
-#'@importFrom Seurat as.Seurat
-#'@importFrom Seurat NormalizeData
-#'@importFrom Seurat FindVariableFeatures
-#'@importFrom Seurat ScaleData
-#'@importFrom Seurat RunPCA
-#'@importFrom Seurat RunUMAP
-#'@importFrom magrittr %>%
-#'@importFrom SummarizedExperiment colData
+#' @importFrom scPred scPredict getFeatureSpace trainModel get_scpred
+#' @importFrom SeuratObject RenameAssays
+#' @importFrom Seurat as.Seurat NormalizeData FindVariableFeatures ScaleData RunPCA RunUMAP
+#' @importFrom magrittr %>%
+#' @importFrom SummarizedExperiment colData
 #'
 #'
 #' @examples
 #'
+#' library(iUSEiSEE)
+#' library(dplyr)
 #'
-#'library(iUSEiSEE)
-#'library(dplyr)
+#' # load SCE from iUSEiSEE
 #'
-#'# load SCE from iUSEiSEE
+#' sce_annotated <- readRDS(
+#'                     file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 #'
-#'sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
+#' #run the annotation
+#' sce_annotated <- run_scPred(sce_query = sce_annotated,
+#'                             reference = sce_annotated,
+#'                             ref_labs = "labels_main")
 #'
-#'#run the annotation
-#'#sce_annotated <- run_scPred(sce_query = sce_annotated, reference = sce_annotated, ref_labs = "labels_main")
-#'
-#'# plot the existing annotation with scater(t-SNE)
-#'scater::plotTSNE(sce_annotated, color_by = "scb_scPred_labels")
+#' # plot the existing annotation with scater(t-SNE)
+#' scater::plotTSNE(sce_annotated, color_by = "scb_scPred_labels")
 #'
 #'
-#'@family classical machine learning family
+#' @family classical machine learning family
 run_scPred <- function(sce_query,
                        reference,
                        ref_labs,
@@ -52,8 +50,8 @@ run_scPred <- function(sce_query,
                        recompute_alignment = TRUE,
                        seed = 66,
                        return_extra_info = FALSE,
-                       verbose = FALSE,
-                       ...)
+                       verbose = FALSE
+                       )
 
 {
 
@@ -71,8 +69,13 @@ run_scPred <- function(sce_query,
 
   # Assay needs to be renamed to data (from originalexp), needed in later function
 
-  seurat_query <- SeuratObject::RenameAssays(seurat_query, assay.name = 'originalexp', new.assay.name = 'data')
-  seurat_ref <- SeuratObject::RenameAssays(seurat_ref, assay.name = 'originalexp', new.assay.name = 'data')
+  seurat_query <- SeuratObject::RenameAssays(seurat_query,
+                                             assay.name = 'originalexp',
+                                             new.assay.name = 'data')
+
+  seurat_ref <- SeuratObject::RenameAssays(seurat_ref,
+                                           assay.name = 'originalexp',
+                                           new.assay.name = 'data')
 
   # normalize, dimred for ref
   seurat_ref <- seurat_ref %>%
@@ -100,14 +103,11 @@ run_scPred <- function(sce_query,
 
   seurat_query <- scPred::scPredict(new = seurat_query,
                                     reference = seurat_ref,
-                                    threshold = 0.55,
-                                    max.iter.harmony = 20,
-                                    recompute_alignment = TRUE,
-                                    seed = 66
+                                    threshold = threshold,
+                                    max.iter.harmony = max.iter.harmony,
+                                    recompute_alignment = recompute_alignment,
+                                    seed = seed
                                     )
-
-  #include loop around re-annotation?
-
 
 
   # return input SCE with new annotation-----------------------------------

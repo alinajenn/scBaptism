@@ -3,9 +3,10 @@
 #' @param sce_query SCE to be annotated
 #' @param markers_list List of marker genes
 #' @param similarity_threshold threshold whether the highest score is significantly higher than others
-#' @param column_name name of the column that contains the final annotation
 #' @param n_cpus number of cpu cores used
 #' @param verbose display message after annotation is finished
+#' @param score_mode calculation mode for scores
+#' @param unassigned_label name of label to assign to cells, were no clear majority signature is defined
 #'
 #' @returns sce_query : a SingleCellExperiment object, with the extra info on the
 #' annotated cells
@@ -20,7 +21,7 @@
 #' library(Seurat)
 #' library(dplyr)
 #'
-#' # load SCE from iuseisee
+#' # load SCE from iUSEiSEE
 #'
 #' sce_annotated <- readRDS(
 #'   file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE")
@@ -49,10 +50,13 @@
 #'
 #'@family marker family
 run_CIA <- function(sce_query,
-                    markers_list, #markers input (list)
-                    similarity_threshold = 0, #is highest score significantly higher? If not then cell=unassigned
-                    n_cpus = 1, # number of cpu cores, default
-                    verbose = FALSE)
+                    markers_list,
+                    similarity_threshold = 0.1,
+                    n_cpus = 1,
+                    score_mode = "scaled",
+                    unassigned_label = "Unassigned",
+                    verbose = FALSE
+                    )
 
 {
 
@@ -62,22 +66,22 @@ run_CIA <- function(sce_query,
 
   # transformation --------------------------------------------
 
-  #input as SCE is accepted
+  #unnecessary: input as SCE is accepted
 
   # running annotation -----------------------------------------
-
-  #hard-code column name so it will fit with the scBaptism naming conventions
-  column_name = "scb_CIA_labels"
 
 
   sce_query <- CIA::CIA_classify(data = sce_query,
                                  signatures_input = markers_list,
+                                 column_name = "scb_CIA_labels",
                                  similarity_threshold = similarity_threshold,
-                                 column_name = column_name,
-                                 n_cpus = n_cpus)
+                                 n_cpus = n_cpus,
+                                 score_mode = score_mode,
+                                 unassigned_label = unassigned_label
+                                 )
 
 
-  # return sce with new annotation -----------------------------
+  # return SCE with new annotation -----------------------------
 
   #adding annotation column to SCE is done by CIA_classify already
 

@@ -3,9 +3,12 @@
 #' @param sce_query SCE to be annotated
 #' @param reference SCE object that acts as a reference
 #' @param ref_labs Column from the references colData
+#' @param threshold_Cluster threshold on similarity for cluster-wise annotation
+#' @param threshold_Cell2Cluster the threshold which the maximum similarity between the query and a reference cell must exceed for the cell-type to be assigned
+#' @param w_Cell a positive integer specifying the number of nearest neighbors to find during cell indexing
+#' @param w_Cell2Cluster an integer specifying the number of nearest neighbors to find during sc annotation
 #' @param return_extra_info if TRUE, adds additional metadata from the annotation
 #' @param verbose display message after annotation is finished
-#'
 #'
 #' @returns sce_query a SingleCellExperiment object, with the extra info on the
 #' annotated cells
@@ -28,7 +31,9 @@
 #' sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 #'
 #' #run the annotation
-#' sce_annotated <- run_scmap(sce_query= sce_annotated, reference = sce_annotated, ref_labs = "labels_main")
+#' sce_annotated <- run_scmap(sce_query= sce_annotated,
+#'                           reference = sce_annotated,
+#'                            ref_labs = "labels_main")
 #'
 #' #plot the new annotations with scater(t-SNE)
 #' #cell wise annotation
@@ -39,11 +44,15 @@
 #'
 #'@family classical machine learning family
 run_scmap <- function(sce_query,
-                      reference, #SCE
+                      reference,
                       ref_labs,
+                      threshold_Cluster = 0.7,
+                      threshold_Cell2Cluster = 0.5,
+                      w_Cell = 10,
+                      w_Cell2Cluster = 3,
                       return_extra_info = FALSE,
-                      verbose = FALSE,
-                      ...)
+                      verbose = FALSE
+                      )
 
 {
 
@@ -80,7 +89,8 @@ run_scmap <- function(sce_query,
     projection = sce_query,
     index_list = list(
       refinfo = metadata(reference)$scmap_cluster_index
-    )
+    ),
+    threshold = threshold_Cluster
   )
 
 
@@ -94,14 +104,17 @@ run_scmap <- function(sce_query,
     sce_query,
     list(
       refinfo = metadata(reference)$scmap_cell_index
-    )
+    ),
+    w = w_Cell
   )
 
   scmapCell_clusters <- scmap::scmapCell2Cluster(
     scmapCell_results,
     list(
       as.character(SummarizedExperiment::colData(reference)[[ref_labs]])
-    )
+    ),
+    w = w_Cell2Cluster,
+    threshold = threshold_Cell2Cluster
   )
 
 
