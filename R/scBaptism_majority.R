@@ -1,6 +1,6 @@
 #' scBaptism_majority
 #'
-#' @param sce_query SCE with at least three annotations
+#' @param input_vector vector to do the majority voting on
 #'
 #'
 #' @returns sce_query: SCE object with an added metadata column for the majority annotation

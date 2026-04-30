@@ -1,34 +1,18 @@
-#' check_inputs
-#'
-#' @param sce_query SCE to be annotated
-#' @param reference SCE with annotations
-#' @param ref_labs existing annotation in the reference
-#'
-#' @returns
-#'
-#' export
-#'
-#' @examples
-#'
-#' library(iUSEiSEE)
-#' library(dplyr)
-#'
-#' # load SCE from iUSEiSEE
-#'
-#' sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
-#'
-#' # run the annotation
-#' sce_annotated <- run_CelliDref(sce_annotated, markers_lists)
-#'
-#' # plot the existing annotation with scater(t-SNE)
-#' scater::plotTSNE(sce_annotated, color_by = "scb_CelliDref_labels")
-#'
-#'
-###############################documentation missing for all
+# file for all the functions checking inputs provided by the user
+
+
 
 
   # sce_query ----------------------------------------------------------
 
+
+#' basic checks whether sce_query is is provided, is an SCE and contains the neccessary assays
+#'
+#' @param sce_query SingleCellExperiment object with assays counts and logcounts
+#'
+#' @returns no return, execution of package is stopped if sce_query is not a suitable input
+#'
+#' @noRd
 .check_query <- function(sce_query){
 
   #check if query is provided
@@ -36,7 +20,7 @@
     stop("Please provide a query object.")
   }
 
-  if(!(class(sce_query) == "SingleCellExperiment")) {
+  if(!(is(sce_query, "SingleCellExperiment"))) {
     stop("Query input is not a SingleCellExperiment object.")
   }
 
@@ -50,8 +34,19 @@
 
 }
 
+
+
+
   # anno_methods -------------------------------------------------------
 
+#' checks if anno_methods is  the correct format (list of strings), if all strings are valid methods
+#' and discards any invalid methods
+#'
+#' @param anno_methods list of strings
+#'
+#' @returns anno_methods only containing valid methods
+#'
+#' @noRd
 .check_anno_methods <- function(anno_methods){
   #is it provided?
   if(is.null(anno_methods)) {
@@ -91,11 +86,21 @@
   return(anno_methods)
 }
 
+
+
+
   # reference ----------------------------------------------------------
 
-
+#' basic checks whether reference is a SCE and if it has annotation data in ref_labs colData
+#'
+#' @param reference SCE with counts, logcounts and colData that contains annotation
+#' @param ref_labs string containing the name of annotation colData of reference
+#'
+#' @returns no return, execution of package is stopped if reference or ref_labs are not a reasonable inputs
+#'
+#' @noRd
 .check_reference <- function(reference, ref_labs){
-  if(!(class(reference) == "SingleCellExperiment") & !is.null(reference)) {
+  if(!(is(reference, "SingleCellExperiment")) & !is.null(reference)) {
     stop("Reference input is not a SingleCellExperiment object.")
   }
 
@@ -133,21 +138,42 @@
   #check if ref_labs is colData in reference
 
   if(!is.null(reference)) {
-   if(is.null(SingleCellExperiment::colData(reference)[[ref_labs]])){
+   if(!(ref_labs %in% names(colData(reference)))){
       stop("ref_labs needs to be the name of colData column in reference")
    }
 
   }
 }
 
+
+
+
+
   # markers_list --------------------------------------------------------
 
 
+#' basic checks whether markers_list is actually a nested list and contains at least one item
+#'
+#' @param markers_list nested list of characters
+#'
+#' @returns no return, execution of package is stopped if markers_list is not a suitable input
+#'
+#' @noRd
 .check_markers_list <- function(markers_list){
 
   # check whether an provided object is a list
   if(!is.list(markers_list) & !is.null(markers_list)) {
     stop("markers_list is not a list")
+
+    if (!all(vapply(markers_list, is.list, logical(1)))) {
+      stop("markers_list is not a list")
+    }
+  }
+
+  if(!is.null(markers_list)) {
+    if(length(markers_list) < 1){
+      stop("markers_list does not contain anything")
+    }
   }
 
 }
