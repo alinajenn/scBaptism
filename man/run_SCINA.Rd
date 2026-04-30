@@ -13,7 +13,9 @@ run_SCINA(
   convergence_n = 12,
   convergence_rate = 0.999,
   sensitivity_cutoff = 0.9,
-  ...
+  rm_overlap = 1,
+  allow_unknown = 1,
+  log_file = "SCINA.log"
 )
 }
 \arguments{
@@ -24,6 +26,20 @@ run_SCINA(
 \item{return_extra_info}{if TRUE, adds additional metadata from the annotation}
 
 \item{verbose}{display message after annotation is finished}
+
+\item{max_iter}{max iterations allowed for EM algorithm}
+
+\item{convergence_n}{stop the SCINA algorithm if during the last n rounds of iterations, cell type assignment keeps steady above the convergence_rate}
+
+\item{convergence_rate}{percentage of cells for which the type assignment was stable for the last n rounds}
+
+\item{sensitivity_cutoff}{cutoff to remove signatures whose cells types are deemed as non-existent at all in the data by the SCINA algorithm}
+
+\item{rm_overlap}{binary deciding whether shared symbols in the markers_list will be deleted}
+
+\item{allow_unknown}{if 1 unknown annotation is allowed, if 0 not allowed}
+
+\item{log_file}{name of log file, that stores infor about SCINA algorithm}
 }
 \value{
 sce_query: a SingleCellExperiment object, with the extra info on the
@@ -59,7 +75,7 @@ markers_lists <- seu_all_markers \%>\%
 markers_lists <- split(markers_lists$gene, markers_lists$cluster)
 
 # run the annotation
-run_SCINA(sce_query = sce_annotated, markers_list =  markers_lists)
+sce_annotated <- run_SCINA(sce_query = sce_annotated, markers_list =  markers_lists)
 
 # plot the existing annotation with scater(t-SNE)
 scater::plotTSNE(sce_annotated, color_by = "scb_SCINA_labels")

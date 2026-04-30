@@ -5,11 +5,11 @@
 \title{run_scBaptism}
 \usage{
 run_scBaptism(
-  sce_query,
-  anno_methods,
-  markers_list,
-  reference,
-  ref_labs,
+  sce_query = NULL,
+  anno_methods = NULL,
+  markers_list = NULL,
+  reference = NULL,
+  ref_labs = NULL,
   verbose = FALSE,
   return_extra_info = FALSE,
   ...
@@ -29,6 +29,8 @@ run_scBaptism(
 \item{verbose}{display message after each annotation is finished}
 
 \item{return_extra_info}{if TRUE, adds additional metadata from the annotation when available}
+
+\item{...}{further arguments passed to other methods}
 }
 \value{
 sce_query : a SingleCellExperiment object, with the extra info on the

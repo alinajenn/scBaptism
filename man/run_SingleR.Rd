@@ -8,9 +8,14 @@ run_SingleR(
   sce_query,
   reference,
   ref_labs,
+  clusters = NULL,
+  restrict = NULL,
+  check.missing.test = FALSE,
+  check.missing.ref = FALSE,
+  num.threads = bpnworkers(BPPARAM),
+  BPPARAM = SerialParam(),
   return_extra_info = FALSE,
-  verbose = FALSE,
-  ...
+  verbose = FALSE
 )
 }
 \arguments{
@@ -19,6 +24,18 @@ run_SingleR(
 \item{reference}{SCE object that acts as a reference}
 
 \item{ref_labs}{List of gene labels or column from the references colData}
+
+\item{clusters}{vector or factor of cluster identities for each cell in query}
+
+\item{restrict}{character vector of gene names used for marker selection, default is all genes}
+
+\item{check.missing.test}{binary, whether rows of query should be tested for missing values}
+
+\item{check.missing.ref}{binary, whether rows of reference should be tested for missing values}
+
+\item{num.threads}{Integer specifying number of threads to use for index building & classification}
+
+\item{BPPARAM}{BiocParallelParam specifying how parallelization should be performed}
 
 \item{return_extra_info}{if TRUE, adds additional metadata from the annotation (delta.next, scores, prunded.labels)}
 
@@ -37,13 +54,15 @@ library(iUSEiSEE)
 library(dplyr)
 
 
-# load SCE from iuseisee
+# load SCE from iUSeiSEE
 
 sce_annotated <- readRDS(
   file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 
 #using the labels_main of the example to run another annotation with SingleR
-sce_query <- run_SingleR(sce_query = sce_annotated, reference = sce_annotated, ref_labs = sce_annotated$labels_main)
+sce_annotated <- run_SingleR(sce_query = sce_annotated,
+                          reference = sce_annotated,
+                          ref_labs = "labels_main")
 
 # plot the existing annotation with scater(t-SNE)
 scater::plotTSNE(sce_annotated, color_by = "scb_SingleR_labels")

@@ -8,10 +8,20 @@ run_Seurat(
   sce_query,
   reference,
   ref_labs,
+  query.assay = NULL,
+  weight.reduction = "pcaproject",
+  l2.norm = FALSE,
+  Seurat_dims = NULL,
+  k.weight = 50,
+  sd.weight = 1,
+  eps = 0,
+  n.trees = 50,
+  slot = "data",
+  prediction.assay = FALSE,
+  store.weights = TRUE,
   n_pcs = 30,
   return_extra_info = FALSE,
-  verbose = FALSE,
-  ...
+  verbose = FALSE
 )
 }
 \arguments{
@@ -20,6 +30,28 @@ run_Seurat(
 \item{reference}{SCE with the reference for the annotation}
 
 \item{ref_labs}{of the column of the reference, that contains annotation information}
+
+\item{query.assay}{name of the Assay to use from query}
+
+\item{weight.reduction}{Dimensional reduction to use for the weighting anchors. Options are:pcaproject, lsiproject, pca, cca, custom DimReduc}
+
+\item{l2.norm}{Perform L2 normalization on the cell embeddings after dimensional reduction}
+
+\item{Seurat_dims}{Set of dimensions to use in the anchor weighting procedure. If NULL, the same dimensions that were used to find anchors will be used for weighting.}
+
+\item{k.weight}{Number of neighbors to consider when weighting anchors}
+
+\item{sd.weight}{Controls the bandwidth of the Gaussian kernel for weighting}
+
+\item{eps}{Error bound on the neighbor finding algorithm (from RANN)}
+
+\item{n.trees}{More trees gives higher precision when using annoy approximate nearest neighbor search}
+
+\item{slot}{Slot to store the imputed data. Must be either "data" (default) or "counts"}
+
+\item{prediction.assay}{Return an Assay object with the prediction scores for each class stored in the data slot.}
+
+\item{store.weights}{Optionally store the weights matrix used for predictions in the returned query object.}
 
 \item{n_pcs}{number of PCs to compute on reference}
 
@@ -39,10 +71,13 @@ run_Seurat
 #loading example dataset
 library(iUSEiSEE)
 
-sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
+sce_annotated <-
+  readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 
 
-sce_annotated <- run_Seurat(sce_query = sce_annotated, reference = sce_annotated, ref_labs = "labels_main")
+sce_annotated <- run_Seurat(sce_query = sce_annotated,
+                            reference = sce_annotated,
+                            ref_labs = "labels_main")
 
 #tSNE plot of the result
 scater::plotTSNE(sce_annotated, color_by = "scb_Seurat_labels")

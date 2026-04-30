@@ -7,15 +7,35 @@
 run_CelliDmk(
   sce_query,
   markers_list,
+  reduction = "MCA",
+  n.features = 200,
+  CelliD_features = NULL,
+  CelliD_dims = seq(50),
+  minSize = 10,
+  log.trans = TRUE,
+  p.adjust = TRUE,
   return_extra_info = FALSE,
-  verbose = FALSE,
-  ...
+  verbose = FALSE
 )
 }
 \arguments{
 \item{sce_query}{SCE to be annotated}
 
 \item{markers_list}{List of marker genes}
+
+\item{reduction}{name of the MCA reduction}
+
+\item{n.features}{integer of top n features to consider for hypergeometric test}
+
+\item{CelliD_features}{vector of features to calculate the gene ranking by default will take everything in the selected mca reduction.}
+
+\item{CelliD_dims}{MCA dimensions to use to compute n.features top genes.}
+
+\item{minSize}{minimum number of overlapping genes in geneset and}
+
+\item{log.trans}{if TRUE tranform the pvalue matrix with -log10 and convert it to sparse matrix}
+
+\item{p.adjust}{if TRUE apply Benjamini Hochberg correction to p-value}
 
 \item{return_extra_info}{if TRUE, adds additional metadata from the annotation}
 
@@ -24,8 +44,6 @@ run_CelliDmk(
 \value{
 sce_query a SingleCellExperiment object, with the extra info on the
 annotated cells
-
-export
 }
 \description{
 run_CelliDmk
@@ -35,13 +53,32 @@ run_CelliDmk
 
 library(iUSEiSEE)
 library(dplyr)
+library(Seurat)
 
 # load SCE from iUSEiSEE
 
 sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 
+
+#get the markers list using Seurat
+myseu <- Seurat::as.Seurat(sce_annotated)
+myseu <- Seurat::ScaleData(myseu)
+Seurat::Idents(myseu) <- "labels_main"
+
+seu_all_markers <- Seurat::FindAllMarkers(myseu, test.use = "wilcox", only.pos = TRUE,
+                                         min.pct = 0.25, logfc.threshold = 0.25)
+
+top_k_markers <- 50
+
+markers_lists <- seu_all_markers \%>\%
+ dplyr::group_by(cluster) \%>\%
+ dplyr::top_n(n = top_k_markers, wt = avg_log2FC)
+markers_lists <- split(markers_lists$gene, markers_lists$cluster)
+
+
 # run the annotation
-sce_annotated <- run_tool(sce_annotated, markers_lists)
+sce_annotated <- run_CelliDmk(sce_query = sce_annotated,
+                              markers_list = markers_lists)
 
 # plot the existing annotation with scater(t-SNE)
 scater::plotTSNE(sce_annotated, color_by = "scb_CelliDmk_labels")

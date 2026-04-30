@@ -8,9 +8,21 @@ run_scClassify(
   sce_query,
   reference,
   ref_labs,
+  cellTypes_test = NULL,
+  k = 10,
+  prob_threshold = 0.7,
+  cor_threshold_static = 0.5,
+  cor_threshold_high = 0.7,
+  scClassify_features = "limma",
+  algorithm = "WKNN",
+  similarity = "pearson",
+  cutoff_method = c("dynamic", "static"),
+  weighted_ensemble = FALSE,
+  weights = NULL,
+  parallel = FALSE,
+  BPPARAM = BiocParallel::SerialParam(),
   return_extra_info = FALSE,
-  verbose = FALSE,
-  ...
+  verbose = FALSE
 )
 }
 \arguments{
@@ -18,11 +30,39 @@ run_scClassify(
 
 \item{reference}{SCE object that acts as a reference}
 
+\item{ref_labs}{Column from the references colData}
+
+\item{cellTypes_test}{A list or a vector indicates cell types of the query datasets (Optional).}
+
+\item{k}{An integer indicates the number of neighbors}
+
+\item{prob_threshold}{A numeric indicates the probability threshold for KNN/WKNN/DWKNN.}
+
+\item{cor_threshold_static}{A numeric indicates the static correlation threshold.}
+
+\item{cor_threshold_high}{A numeric indicates the highest correlation threshold}
+
+\item{scClassify_features}{A vector indicates the gene selection method, set as "limma" by default. This should be one or more of "limma", "DV", "DD", "chisq", "BI".}
+
+\item{algorithm}{A vector indicates the KNN method that are used, set as "WKNN" by default. This should be one or more of "WKNN", "KNN", "DWKNN".}
+
+\item{weighted_ensemble}{A logical input indicates in ensemble learning, whether the results is combined by a weighted score for each base classifier.}
+
+\item{weights}{A vector indicates the weights for ensemble}
+
+\item{parallel}{A logical input indicates whether running in paralllel or not}
+
+\item{BPPARAM}{A BiocParallelParam class object from the BiocParallel package is used. Default is SerialParam().}
+
 \item{return_extra_info}{if TRUE, adds additional metadata from the annotation}
 
 \item{verbose}{display message after annotation is finished}
 
-\item{ref_labels}{Column from the references colData}
+\item{selectFeatures}{string vector deciding which methods to use for feature selection during training. Defaults to "limma", other options:"DV", "DD", "chisq", "BI", "Cepo"}
+
+\item{similarityvA}{vector indicates the similarity measure that are used, set as "pearson" by default. This should be one or more of "pearson", "spearman", "cosine", "jaccard", "kendall", "binomial", "weighted_rank","manhattan"}
+
+\item{cutoff_methodvA}{vector indicates the method to cutoff the correlation distribution. Set as "dynamic" by default.}
 }
 \value{
 sce_query a SingleCellExperiment object, with the extra info on the
@@ -35,6 +75,7 @@ run_scClassify
 
 library(iUSEiSEE)
 library(dplyr)
+
 # load SCE from iUSEiSEE
 
 sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))

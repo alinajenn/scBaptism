@@ -7,8 +7,10 @@
 run_CIA(
   sce_query,
   markers_list,
-  similarity_threshold = 0,
+  similarity_threshold = 0.1,
   n_cpus = 1,
+  score_mode = "scaled",
+  unassigned_label = "Unassigned",
   verbose = FALSE
 )
 }
@@ -21,9 +23,11 @@ run_CIA(
 
 \item{n_cpus}{number of cpu cores used}
 
-\item{verbose}{display message after annotation is finished}
+\item{score_mode}{calculation mode for scores}
 
-\item{column_name}{name of the column that contains the final annotation}
+\item{unassigned_label}{name of label to assign to cells, were no clear majority signature is defined}
+
+\item{verbose}{display message after annotation is finished}
 }
 \value{
 sce_query : a SingleCellExperiment object, with the extra info on the
@@ -38,7 +42,7 @@ library(iUSEiSEE)
 library(Seurat)
 library(dplyr)
 
-# load SCE from iuseisee
+# load SCE from iUSEiSEE
 
 sce_annotated <- readRDS(
   file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE")

@@ -13,8 +13,7 @@ run_scPred(
   recompute_alignment = TRUE,
   seed = 66,
   return_extra_info = FALSE,
-  verbose = FALSE,
-  ...
+  verbose = FALSE
 )
 }
 \arguments{
@@ -24,6 +23,14 @@ run_scPred(
 
 \item{ref_labs}{Column from the references colData}
 
+\item{threshold}{Threshold used for probabilities to classify cells into classes. All cells below this threshold value will be labels as "unassigned".}
+
+\item{max.iter.harmony}{Maximum number of rounds to run Harmony. One round of Harmony involves one clustering and one correction step.}
+
+\item{recompute_alignment}{Recompute alignment: TRUE/FALSE. Useful if scPredict() has already been run}
+
+\item{seed}{Numeric seed for harmony}
+
 \item{return_extra_info}{if TRUE, adds additional metadata from the annotation}
 
 \item{verbose}{display message after annotation is finished}
@@ -31,24 +38,24 @@ run_scPred(
 \value{
 sce_query a SingleCellExperiment object, with the extra info on the
 annotated cells
-
-export
 }
 \description{
 run_scPred
 }
 \examples{
 
-
 library(iUSEiSEE)
 library(dplyr)
 
 # load SCE from iUSEiSEE
 
-sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
+sce_annotated <- readRDS(
+                    file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 
 #run the annotation
-#sce_annotated <- run_scPred(sce_query = sce_annotated, reference = sce_annotated, ref_labs = "labels_main")
+sce_annotated <- run_scPred(sce_query = sce_annotated,
+                            reference = sce_annotated,
+                            ref_labs = "labels_main")
 
 # plot the existing annotation with scater(t-SNE)
 scater::plotTSNE(sce_annotated, color_by = "scb_scPred_labels")

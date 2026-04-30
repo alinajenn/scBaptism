@@ -8,9 +8,12 @@ run_scmap(
   sce_query,
   reference,
   ref_labs,
+  threshold_Cluster = 0.7,
+  threshold_Cell2Cluster = 0.5,
+  w_Cell = 10,
+  w_Cell2Cluster = 3,
   return_extra_info = FALSE,
-  verbose = FALSE,
-  ...
+  verbose = FALSE
 )
 }
 \arguments{
@@ -19,6 +22,14 @@ run_scmap(
 \item{reference}{SCE object that acts as a reference}
 
 \item{ref_labs}{Column from the references colData}
+
+\item{threshold_Cluster}{threshold on similarity for cluster-wise annotation}
+
+\item{threshold_Cell2Cluster}{the threshold which the maximum similarity between the query and a reference cell must exceed for the cell-type to be assigned}
+
+\item{w_Cell}{a positive integer specifying the number of nearest neighbors to find during cell indexing}
+
+\item{w_Cell2Cluster}{an integer specifying the number of nearest neighbors to find during sc annotation}
 
 \item{return_extra_info}{if TRUE, adds additional metadata from the annotation}
 
@@ -37,12 +48,14 @@ library(iUSEiSEE)
 library(Seurat)
 library(dplyr)
 
-#load SCE from iuseisee
+#load SCE from iUSEiSEE
 
 sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 
 #run the annotation
-sce_annotated <- run_scmap(sce_query= sce_annotated, reference = sce_annotated, ref_labs = "labels_main")
+sce_annotated <- run_scmap(sce_query= sce_annotated,
+                          reference = sce_annotated,
+                           ref_labs = "labels_main")
 
 #plot the new annotations with scater(t-SNE)
 #cell wise annotation

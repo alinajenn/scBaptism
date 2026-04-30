@@ -8,9 +8,15 @@ run_CelliDref(
   sce_query,
   reference,
   ref_labs,
+  reduction = "MCA",
+  n.features = 200,
+  CelliD_features = NULL,
+  CelliD_dims = seq(50),
+  minSize = 10,
+  log.trans = TRUE,
+  p.adjust = TRUE,
   return_extra_info = FALSE,
-  verbose = FALSE,
-  ...
+  verbose = FALSE
 )
 }
 \arguments{
@@ -20,6 +26,20 @@ run_CelliDref(
 
 \item{ref_labs}{existing annotation in the reference}
 
+\item{reduction}{name of the MCA reduction}
+
+\item{n.features}{integer of top n features to consider for hypergeometric test}
+
+\item{CelliD_features}{vector of features to calculate the gene ranking by default will take everything in the selected mca reduction.}
+
+\item{CelliD_dims}{MCA dimensions to use to compute n.features top genes.}
+
+\item{minSize}{minimum number of overlapping genes in geneset and}
+
+\item{log.trans}{if TRUE tranform the pvalue matrix with -log10 and convert it to sparse matrix}
+
+\item{p.adjust}{if TRUE apply Benjamini Hochberg correction to p-value}
+
 \item{return_extra_info}{if TRUE, adds additional metadata from the annotation}
 
 \item{verbose}{display message after annotation is finished}
@@ -27,8 +47,6 @@ run_CelliDref(
 \value{
 sce_query a SingleCellExperiment object, with the extra info on the
 annotated cells
-
-export
 }
 \description{
 run_CelliDref
@@ -43,7 +61,9 @@ library(dplyr)
 sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 
 # run the annotation
-sce_annotated <- run_tool(sce_annotated, markers_lists)
+sce_annotated <- run_CelliDref(sce_query = sce_annotated,
+                               reference = sce_annotated,
+                               ref_labs = "labels_main")
 
 # plot the existing annotation with scater(t-SNE)
 scater::plotTSNE(sce_annotated, color_by = "scb_CelliDref_labels")
