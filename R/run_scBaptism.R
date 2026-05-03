@@ -37,7 +37,7 @@ run_scBaptism <- function(sce_query = NULL,
 
   #check if selected tools match the  provided inputs
 
-  anno_methods_final <- .match_input_methods(anno_methods)
+  anno_methods_final <- .match_input_methods(anno_methods, reference, markers_list)
 
   # prepare parameter inputs ---------------------------------------------------
 

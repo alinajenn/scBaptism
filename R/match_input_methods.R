@@ -9,7 +9,10 @@
 #' @returns anno_methods_final, a list with only the methods that can be run with the inputs provided
 #'
 #' @noRd
-.match_input_methods <- function(anno_methods) {
+
+.match_input_methods <- function(anno_methods, reference, markers_list)
+
+  {
 
   anno_methods_final <- anno_methods
 

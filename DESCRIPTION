@@ -23,7 +23,8 @@ Imports:
     scPred,
     CelliD,
     scClassify,
-    scmap
+    scmap,
+    BiocParallel
 Suggests: 
     knitr,
     rmarkdown,

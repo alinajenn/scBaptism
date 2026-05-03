@@ -19,6 +19,7 @@
 #'
 #' @importFrom SingleR SingleR
 #' @importFrom SummarizedExperiment colData
+#' @importFrom BiocParallel bpnworkers SerialParam
 #'
 #' @examples
 #'
@@ -48,8 +49,8 @@ run_SingleR <- function(sce_query,
                         restrict = NULL,
                         check.missing.test = FALSE,
                         check.missing.ref = FALSE,
-                        num.threads = bpnworkers(BPPARAM),
-                        BPPARAM = SerialParam(),
+                        num.threads = BiocParallel::bpnworkers(BPPARAM),
+                        BPPARAM = BiocParallel::SerialParam(),
                         return_extra_info = FALSE,
                         verbose = FALSE
                         )
