@@ -1,20 +1,15 @@
-#' get_winner
+#' .get_winner
 #'
-#' @param input_vector vector to do the majority voting on
+#' @param input_vector vector to do the majority voting on (in our case a row from the annotation data)
+#' @param tie_breaker choose what happens with a tie between the annotations, options are "na" and "first", default is "na"
+#'
+#' @returns max_scorer the name of the most occurring string from the input vector
 #'
 #'
-#' @returns sce_query: SCE object with an added metadata column for the majority annotation
+#' @noRd
 #'
-#' @export
 #'
-#' @examples
-#'
-#' #loading example dataset
-#' library(iUSEiSEE)
-#'
-#' sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
-#'
-get_winner <- function(input_row, tie_breaker = "na") {
+.get_winner <- function(input_row, tie_breaker = "na") {
 
   #rank all values in that row & get highest rank
   rank_table <- table(input_row)
@@ -24,14 +19,14 @@ get_winner <- function(input_row, tie_breaker = "na") {
   max_scorer <- names(rank_table[rank_table == winner])
 
   # resolve ties according to user choice
-  #tie_breaker <- match.arg(tie_breaker)
+
 
   if (length(max_scorer) == 1) {
-    return(max_scorer)                     # clear winner
+    return(max_scorer)
   } else {
     switch(tie_breaker,
-           first  = max_scorer[1],          # deterministic – first in alphabetical order
-           na     = NA_character_    # mark as NA if there is a tie
+           first  = max_scorer[1],
+           na     = NA_character_
            #concat = paste(sort(max_scorer), collapse = ";")  # patch all labels together
     )
   }
@@ -47,6 +42,8 @@ get_winner <- function(input_row, tie_breaker = "na") {
 #' @param anno_columns Vector with names of annotation columns, if NULL all columns starting with "scb" will be used
 #' @param tie_breaker choose what happens with a tie between the annotations, options are "na" and "first", default is "na"
 #'
+#' @importFrom SummarizedExperiment colData
+#' @importFrom dplyr mutate
 #'
 #' @returns sce_query: SCE object with an added metadata column for the majority annotation
 #'
@@ -54,16 +51,19 @@ get_winner <- function(input_row, tie_breaker = "na") {
 #'
 #' @examples
 #'
-#' #loading example dataset, will also serve as a reference
+#' # loading example dataset, will also serve as a reference
 #' library(iUSEiSEE)
-#'
 #' sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 #'
-#' #use scBaptism to get several single cell annotations
+#' # use scBaptism to get several single cell annotations
+#' sce_annotated <- run_scBaptism(sce_query = sce_annotated, anno_methods = c("clustifyr", "scPred", "scClassify"), reference = sce_annotate, ref_labs = "labels_main")
 #'
-#' #perform a majority vote on all annotations obtained through scBaptism, with choosing the first element in case of a tie
+#' # perform a majority vote on all annotations obtained through scBaptism, with choosing the first element in case of a tie
+#' sce_annotated <- majority_vote(sce_query = sce_annotated, anno_columns = NULL, tie_breaker = "first")
 #'
-#' majority_vote(sce_query = sce_annotated, anno_columns = NULL, tie_breaker = "first")
+#' # plot the majority vote annotation
+#'
+#'
 #'
 majority_vote <- function(sce_query, anno_columns = NULL, tie_breaker = "na") {
 
@@ -72,7 +72,7 @@ majority_vote <- function(sce_query, anno_columns = NULL, tie_breaker = "na") {
   if(is.null(anno_columns)) {
 
   #names of all colData
-  col_names <- names(colData(sce_query))
+  col_names <- names(SummarizedExperiment::colData(sce_query))
 
   #get all annotation columns starting with "scb" (scBaptism)
   anno_cols_pattern <- as.character("^scb")
@@ -90,7 +90,7 @@ majority_vote <- function(sce_query, anno_columns = NULL, tie_breaker = "na") {
   #get all annotation from colData as a dataframe
 
   for (item in anno_columns_rest) {
-    sce_df <- cbind(sce_df, as.data.frame(colData(sce_query)[[item]]))
+    sce_df <- cbind(sce_df, as.data.frame(SummarizedExperiment::colData(sce_query)[[item]]))
   }
 
   #name the columns
@@ -101,7 +101,7 @@ majority_vote <- function(sce_query, anno_columns = NULL, tie_breaker = "na") {
   sce_df <- sce_df %>%
     dplyr::mutate(
       majority_labels = apply(sce_df, 1,  # 1 means we apply to rows
-                            get_winner, tie_breaker = tie_breaker)
+                            .get_winner, tie_breaker = tie_breaker)
     )
 
                           #all_of() selects the columns with this name (can be a vector of strings)
