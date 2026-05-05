@@ -28,10 +28,11 @@ Imports:
     dplyr,
     ontoProc,
     igraph,
-    rols
+    rols,
+    scater,
+    cowplot
 Suggests: 
     knitr,
     rmarkdown,
-    iUSEiSEE,
-    scater
+    iUSEiSEE
 VignetteBuilder: knitr
