@@ -24,11 +24,14 @@ Imports:
     CelliD,
     scClassify,
     scmap,
-    BiocParallel
+    BiocParallel,
+    dplyr,
+    ontoProc,
+    igraph,
+    rols
 Suggests: 
     knitr,
     rmarkdown,
     iUSEiSEE,
-    dplyr,
     scater
 VignetteBuilder: knitr

@@ -12,8 +12,8 @@ run_SingleR(
   restrict = NULL,
   check.missing.test = FALSE,
   check.missing.ref = FALSE,
-  num.threads = bpnworkers(BPPARAM),
-  BPPARAM = SerialParam(),
+  num.threads = BiocParallel::bpnworkers(BPPARAM),
+  BPPARAM = BiocParallel::SerialParam(),
   return_extra_info = FALSE,
   verbose = FALSE
 )
