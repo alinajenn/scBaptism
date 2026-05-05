@@ -1,7 +1,11 @@
 #' .get_winner
 #'
 #' @param input_vector vector to do the majority voting on (in our case a row from the annotation data)
-#' @param tie_breaker choose what happens with a tie between the annotations, options are "na" and "first", default is "na"
+#' @param tie_breaker choose what happens with a tie between the annotations, options are "na", "concat", "LCA" and "first", default is "concat"
+#' @param cl_graph graph mapping out cell relationships, needed when user selects "LCA" as tie breaker
+#'
+#' @importFrom ontoProc getOnto
+#' @importFrom igraph make_graph
 #'
 #' @returns max_scorer the name of the most occurring string from the input vector
 #'
@@ -9,7 +13,17 @@
 #' @noRd
 #'
 #'
-.get_winner <- function(input_row, tie_breaker = "na") {
+.get_winner <- function(input_row, tie_breaker = "concat", cl_graph = NULL) {
+
+  # if(tie_breaker == "LCA") {
+  #   cl_g <- ontoProc::getOnto()
+  #
+  #   parents <- cl_g$parents
+  #   self <- rep(names(parents), lengths(parents))
+  #
+  #   cl_graph <- igraph::make_graph(rbind(unlist(parents), self))
+  # }
+
 
   #rank all values in that row & get highest rank
   rank_table <- table(input_row)
@@ -24,15 +38,63 @@
   if (length(max_scorer) == 1) {
     return(max_scorer)
   } else {
-    switch(tie_breaker,
-           first  = max_scorer[1],
-           na     = NA_character_
-           #concat = paste(sort(max_scorer), collapse = ";")  # patch all labels together
+    max_scorer <- switch(EXPR = tie_breaker,
+           'first' = max_scorer[1],
+           'concat' = paste(sort(max_scorer), collapse = "|"),
+           'LCA' = .tiebreaker_LCA(max_scorer, cl_graph),
+           'na' = NA_character_,
+
+           #sort sorts the vector in a specific order
     )
+    return(max_scorer)
   }
 
-  return(max_scorer)
 }
+
+
+#' .tiebreaker_LCA
+#'
+#' @param candidates Input into the
+#' @param graph graph mapping out the relationships of the cells
+#'
+#' @importFrom rols OlsSearch olsSearch
+#' @importFrom ontoProc findCommonAncestors
+#'
+#' @returns sce_query: SCE object with an added metadata column for the majority annotation
+#'
+#' @noRd
+#'
+#'
+.tiebreaker_LCA <- function(candidates, graph) {
+
+  cand_cl <- c()
+
+  # mapping to CL using rols
+  for (cand in candidates) {
+    res <- rols::OlsSearch(cand, ontology = "CL")
+    hits <- rols::olsSearch(res, all = FALSE)
+
+    obo_ids <- hits@response[["obo_id"]]
+    obo_ids <- obo_ids[grepl("^CL[:_]", obo_ids)]
+
+    if (length(obo_ids) == 0) next
+
+    cand_cl <- c(cand_cl, obo_ids[1])
+  }
+
+  cand_cl <- unique(na.omit(cand_cl))
+  cand_cl <- cand_cl[cand_cl %in% V(graph)$name]
+
+  lca <- ontoProc::findCommonAncestors(cand_cl, g = graph)
+  lca <- lca@rownames[[1]]
+
+  lca_res <- rols::OlsSearch(lca, ontology = "CL")
+  lca_hit <- rols::olsSearch(lca_res, all = FALSE)
+  lca_label <- lca_hit@response[["label"]][[1]]
+
+  return(lca_label)
+}
+
 
 
 
@@ -66,7 +128,16 @@
 #'
 #'
 #'
-majority_vote <- function(sce_query, anno_columns = NULL, tie_breaker = "na") {
+majority_vote <- function(sce_query, anno_columns = NULL, tie_breaker) {
+
+  if(tie_breaker == "LCA") {
+    cl_g <- ontoProc::getOnto()
+
+    parents <- cl_g$parents
+    self <- rep(names(parents), lengths(parents))
+
+    cl_graph <- igraph::make_graph(rbind(unlist(parents), self))
+  }
 
   #get the names of all annotation columns, if user did not provide a vector
 
@@ -82,7 +153,6 @@ majority_vote <- function(sce_query, anno_columns = NULL, tie_breaker = "na") {
   }
 
   #initialize data.frame with first entry
-
   sce_df <- as.data.frame(SummarizedExperiment::colData(sce_query)[[anno_columns[1]]])
 
   #delete first column from anno_columns, so it does not get added twice
@@ -101,11 +171,12 @@ majority_vote <- function(sce_query, anno_columns = NULL, tie_breaker = "na") {
   #perform the majority vote
   sce_df <- sce_df %>%
     dplyr::mutate(
-      majority_labels = apply(sce_df, 1,  # 1 means we apply to rows
-                            .get_winner, tie_breaker = tie_breaker)
-    )
+      majority_labels = apply(sce_df, 1, .get_winner, tie_breaker = tie_breaker, cl_graph = cl_graph)
+      )
 
-  # transform the majority annotation from list to character vector
+
+  # transform the majority annotation column from list to character vector
+  # this is useful for visualizations later
   sce_df$majority_labels <- vapply(sce_df$majority_labels, `[`, character(1), 1)
 
   # write result back into the SCE object
