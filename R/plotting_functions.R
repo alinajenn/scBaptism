@@ -1,5 +1,5 @@
-# Viz file
-
+# file for all the plots
+#
 #' plot_multiple_tSNE
 #'
 #'
@@ -26,4 +26,31 @@ plot_multiple_tSNE <- function(sce_query, labels_vector) {
 
 #confusion matrix
 
+plot_confusion_matrix <- function(sce_query, first_tool, second_tool) {
+
+  #turn all the labels into a table
+  anno_table <- table(sce_query[[first_tool]], sce_query[[second_tool]])
+
+
+  #delete all the row with value 0 (good idea??? probably not for the confusion matrix)
+
+  #plot the confusion matrix
+  plot <- anno_tabledf |>
+          ggplot(aes(x = Var2, y = Var1)) +
+          geom_tile(aes(fill = Freq)) +
+          labs(x = first_tool,
+               y = second_tool,
+               title = "Comparing annotations",
+               fill = "Number of cells")
+
+  return(plot)
+
+}
+
+
+  #not the nicest color scale
+
 #alluvial plot
+
+
+  #anno_table <- table(sce_query[[first_tool]], sce_query[[second_tool]])
