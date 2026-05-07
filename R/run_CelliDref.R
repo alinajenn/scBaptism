@@ -43,7 +43,7 @@
 run_CelliDref <- function(sce_query,
                        reference,
                        ref_labs,
-                       reduction = "MCA",
+                       reduction = "mca",
                        n.features = 200,
                        CelliD_features = NULL,
                        CelliD_dims = seq(50),
