@@ -30,7 +30,9 @@ Imports:
     igraph,
     rols,
     scater,
-    cowplot
+    cowplot,
+    ggplot2,
+    ggalluvial
 Suggests: 
     knitr,
     rmarkdown,
