@@ -1,4 +1,3 @@
-# file for all the plots
 #' plot_multiple_tSNE
 #'
 #'
@@ -12,6 +11,21 @@
 #'
 #' @export
 #'
+#' @examples
+#' #load example SCE from iUSEiSEE package
+#'
+#' sce_annotated <- readRDS(
+#'  file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
+#'
+#' #plot two of the exisiting annotations
+#'
+#' plot <- plot_multiple_tSNE(sce_query = sce_annotated,
+#'                           first_tool = "labels_main",
+#'                           second_tool = "labels_fine")
+#'
+#' plot
+#'
+#'
 plot_multiple_tSNE <- function(sce_query, labels_vector) {
 
   #plot all selected columns
@@ -22,6 +36,8 @@ plot_multiple_tSNE <- function(sce_query, labels_vector) {
 
   return(plot)
 }
+
+
 
 #' plot_confusion_matrix
 #'
@@ -35,6 +51,20 @@ plot_multiple_tSNE <- function(sce_query, labels_vector) {
 #' @returns confusion matrix comparing the annotation of two selected annotation columns
 #'
 #' @export
+#'
+#' @examples
+#' #load example SCE from iUSEiSEE package
+#'
+#' sce_annotated <- readRDS(
+#'  file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
+#'
+#' #plot two of the exisiting annotations
+#'
+#' plot <- plot_confusion_matrix(sce_query = sce_annotated,
+#'                               first_tool = "labels_main",
+#'                               second_tool = "labels_fine")
+#'
+#' plot
 #'
 plot_confusion_matrix <- function(sce_query, first_tool, second_tool) {
 
@@ -78,7 +108,22 @@ return(plot)
 #'
 #' @export
 #'
-plot_allivial <- function(sce_query, first_tool, second_tool, threshold = 0.02) {
+#' @examples
+#' #load example SCE from iUSEiSEE package
+#'
+#' sce_annotated <- readRDS(
+#'  file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
+#'
+#' #plot two of the exisiting annotations
+#'
+#' plot <- plot_alluvial(sce_query = sce_annotated,
+#'                       first_tool = "labels_main",
+#'                       second_tool = "labels_fine",
+#'                       threshold = 0.02)
+#'
+#' plot
+#'
+plot_alluvial <- function(sce_query, first_tool, second_tool, threshold = 0.02) {
 
   #get the data frame from the sce_query
   df_compare <- data.frame(
@@ -88,8 +133,8 @@ plot_allivial <- function(sce_query, first_tool, second_tool, threshold = 0.02) 
 
   filtered_first <- df_compare %>%
     dplyr::count(first_anno) %>%
-    dplyr::mutate(prop = n / sum(n)) %>%  #how many of this cell type in the column?
-    dplyr::filter(prop < threshold) %>%   #filter for occurring less then 2% (or custom percentage) cells
+    dplyr::mutate(prop = n / sum(n)) %>%
+    dplyr::filter(prop < threshold) %>%
     dplyr::pull(first_anno)
 
   filtered_second <- df_compare %>%
