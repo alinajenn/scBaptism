@@ -14,6 +14,39 @@
 #'
 #' @export
 #'
+#' @examples
+#' library(iUSEiSEE)
+#' library(Seurat)
+#' library(dplyr)
+#'
+#'
+#' #load example SCE from iUSEiSEE package (also used as reference)
+#'
+#' sce_annotated <- readRDS(
+#'  file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
+#'
+#' #get the markers list using Seurat
+#' myseu <- Seurat::as.Seurat(sce_annotated)
+#' myseu <- Seurat::ScaleData(myseu)
+#' Seurat::Idents(myseu) <- "labels_main"
+#'
+#' seu_all_markers <- Seurat::FindAllMarkers(myseu, test.use = "wilcox", only.pos = TRUE,
+#'                                          min.pct = 0.25, logfc.threshold = 0.25)
+#'
+#' top_k_markers <- 50
+#'
+#' markers_lists <- seu_all_markers %>%
+#'  dplyr::group_by(cluster) %>%
+#'  dplyr::top_n(n = top_k_markers, wt = avg_log2FC)
+#' markers_lists <- split(markers_lists$gene, markers_lists$cluster)
+#'
+#' #run scBaptism to annotate with SingleR and CIA
+#' anno_result <- run_scBaptism(sce_query = sce_annotated,
+#'                              anno_methods = c("SCINA", "CIA),
+#'                              markers_list = markers_lists,
+#'                              reference = sce_annotated,
+#'                              ref_labs = "labels_main")
+#'
 
 
 run_scBaptism <- function(sce_query = NULL,
@@ -67,27 +100,27 @@ run_scBaptism <- function(sce_query = NULL,
   for (item in anno_methods_final) {
 
     sce_query <- switch(EXPR = item,
-    'CIA' = sce_query <- do.call(run_CIA,
-                                 c(list(sce_query = sce_query,
-                                        markers_list = markers_list,
-                                        verbose = verbose),
-                                   args_CIA)),
+    'CIA' = do.call(run_CIA,
+                           c(list(sce_query = sce_query,
+                                  markers_list = markers_list,
+                                  verbose = verbose),
+                            args_CIA)),
 
-    'SCINA' = sce_query <- do.call(run_SCINA,
-                                   c(list(sce_query = sce_query,
-                                          markers_list = markers_list,
-                                          verbose = verbose,
-                                          return_extra_info = return_extra_info),
-                                     args_SCINA)),
+    'SCINA' =  do.call(run_SCINA,
+                               c(list(sce_query = sce_query,
+                                      markers_list = markers_list,
+                                      verbose = verbose,
+                                      return_extra_info = return_extra_info),
+                               args_SCINA)),
 
-    'CelliDmk' = sce_query <- do.call(run_CelliDmk,
+    'CelliDmk' =  do.call(run_CelliDmk,
                                       c(list(sce_query = sce_query,
                                              markers_list = markers_list,
                                              verbose = verbose,
                                              return_extra_info = return_extra_info),
                                         args_CelliDmk)),
 
-    'SingleR' = sce_query <- do.call(run_SingleR,
+    'SingleR' =  do.call(run_SingleR,
                                      c(list(sce_query = sce_query,
                                             reference = reference,
                                             ref_labs = ref_labs,
@@ -95,7 +128,7 @@ run_scBaptism <- function(sce_query = NULL,
                                             return_extra_info = return_extra_info),
                                        args_SingleR)),
 
-    'Seurat' = sce_query <- do.call(run_Seurat,
+    'Seurat' = do.call(run_Seurat,
                                     c(list(sce_query = sce_query,
                                            reference = reference,
                                            ref_labs = ref_labs,
@@ -103,14 +136,14 @@ run_scBaptism <- function(sce_query = NULL,
                                            return_extra_info = return_extra_info),
                                       args_Seurat)),
 
-    'clustifyr' = sce_query <- do.call(run_clustifyr,
+    'clustifyr' =  do.call(run_clustifyr,
                                        c(list(sce_query = sce_query,
                                               reference = reference,
                                               ref_labs = ref_labs,
                                               verbose = verbose),
                                          args_clustifyr)),
 
-    'scPred' = sce_query <- do.call(run_scPred,
+    'scPred' =  do.call(run_scPred,
                                     c(list(sce_query = sce_query,
                                            reference = reference,
                                            ref_labs = ref_labs,
@@ -118,7 +151,7 @@ run_scBaptism <- function(sce_query = NULL,
                                            return_extra_info = return_extra_info),
                                       args_scPred)),
 
-    'scClassify' = sce_query <- do.call(run_scClassify,
+    'scClassify' =  do.call(run_scClassify,
                                         c(list(sce_query = sce_query,
                                                reference = reference,
                                                ref_labs = ref_labs,
@@ -126,7 +159,7 @@ run_scBaptism <- function(sce_query = NULL,
                                                return_extra_info = return_extra_info),
                                           args_scClassify)),
 
-    'scmap' = sce_query <- do.call(run_scmap,
+    'scmap' =  do.call(run_scmap,
                                    c(list(sce_query = sce_query,
                                           reference = reference,
                                           ref_labs = ref_labs,
@@ -134,7 +167,7 @@ run_scBaptism <- function(sce_query = NULL,
                                           return_extra_info = return_extra_info),
                                      args_scmap)),
 
-    'CelliDref' = sce_query <- do.call(run_CelliDref,
+    'CelliDref' =  do.call(run_CelliDref,
                                        c(list(sce_query = sce_query,
                                               reference = reference,
                                               ref_labs = ref_labs,
