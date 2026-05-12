@@ -72,7 +72,13 @@ run_Seurat <- function(sce_query,
   seurat_query <- Seurat::as.Seurat(sce_query)
   seurat_ref <- Seurat::as.Seurat(reference)
 
-  # scale data
+
+  seurat_query <- Seurat::NormalizeData(seurat_query)
+  seurat_ref <- Seurat::NormalizeData(seurat_ref)
+
+  seurat_query <- Seurat::FindVariableFeatures(seurat_query)
+  seurat_ref <- Seurat::FindVariableFeatures(seurat_ref)
+
   seurat_query <- Seurat::ScaleData(seurat_query)
   seurat_ref <- Seurat::ScaleData(seurat_ref)
 

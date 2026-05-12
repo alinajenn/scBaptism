@@ -42,7 +42,7 @@
            'first' = max_scorer[1],
            'concat' = paste(sort(max_scorer), collapse = "|"),
            'LCA' = .tiebreaker_LCA(max_scorer, cl_graph),
-           'na' = NA_character_,
+           'na' = NA_character_
 
            #sort sorts the vector in a specific order
     )
