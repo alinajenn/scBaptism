@@ -1,0 +1,93 @@
+---
+title: "Perform Multiple Annotations at Once with scBaptism"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Perform Multiple Annotations at Once with scBaptism}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(scBaptism)
+```
+
+Vignette Structure
+
+#1: Intro: What does scBaptsim do?
+
+scBaptism is a tool, that enables the user to use multiple existing single cell annotation methods at once (SCINA, CIA, SingleR, Seurat, scPred, scClassify, clustifyr, scmap, CelliD marker based, CelliD reference based), as well as methods to integrate the obtained annotations and options for visualizations. 
+
+Single Cell transcriptomic data can be used to identify different cells inside a sample, the so called annotation. Many different tools are available to automatically perform this process. For researchers this poses the challenge of being familiar with many different tools and how to use them at once. scBaptism offers the possibility to run 10 different annotation methods from 9 existing R packages at once and with the same input data. This makes the process of annotating faster and more accessible. Additionally the resulting annotations can be collapsed into one annotation by majority voting and through a meta cell approach.
+
+2.1: Input format query: What does a user need to provide me? (Installation?)
+
+You can install scBaptism directly from github
+
+```{r setup}
+#development version
+remotes::install_github("alinajenn/scBaptism@run_anno_tools")
+```
+
+The format of your query (aka input data) has to be a SingleCellExperiment object (SCE), containing two assays: 'counts' and 'logcounts'. Dimensionality reductions should also be performed: PCA, tSNE & UMAP. If you have an SCE proceed directly to the next step. If you have a raw expression matrix, you can create a SCE like this: 
+
+
+```{r setup}
+
+```
+
+2.2 Input format reference and markers_list
+
+3.1: run_scBaptism
+
+Once you have all the input data, running scBaptism can be done by simply calling the main function run_scBaptism()
+```{r setup}
+
+
+```
+
+-basic -[Seurat Issue note] -passing on parameters -
+
+3.2 Additional parameters
+
+Most of the annotation methods scBaptism can run have many parameters to give the user detailed control over how the annotation is performed. When running run_scBaptism the default parameter setting of these tools are used. If you wish the manually control any specific parameter this is possible and you can simply include them in the function call. 
+
+Some parameters had to be renamed, because otherwise they would get passed on to more then one function. You can still adjust these parameters by using their new name:
+
+Seurat: 
+use Seurat_dims instead of dims
+
+CelliD: 
+use CelliD_dims instead of dims
+use CelliD_features instead of features
+
+scClassify:
+use scClassify_features instead of features
+
+clustifyr:
+use clustifyr_threshold instead of threshold
+
+scPredict:
+use scPredict_threshold instead of threshold
+
+scmap:
+use threshold_Cluster instead of threshold (for the cluster based annotation)
+use threshold_Cell2Cluster instead of threshold (for the cell based annotation)
+
+```{r setup}
+# example: 
+
+```
+
+
+4: plottings
+
+5: majority voting
+
+6: supercells
