@@ -3,7 +3,7 @@
 #' @param sce_query SCE to be annotated
 #' @param reference SCE object that acts as a reference
 #' @param ref_labs Column from the references colData
-#' @param threshold Threshold used for probabilities to classify cells into classes. All cells below this threshold value will be labels as "unassigned".
+#' @param scPred_threshold Threshold used for probabilities to classify cells into classes. All cells below this threshold value will be labels as "unassigned".
 #' @param max.iter.harmony Maximum number of rounds to run Harmony. One round of Harmony involves one clustering and one correction step.
 #' @param recompute_alignment Recompute alignment: TRUE/FALSE. Useful if scPredict() has already been run
 #' @param seed Numeric seed for harmony
@@ -45,7 +45,7 @@
 run_scPred <- function(sce_query,
                        reference,
                        ref_labs,
-                       threshold = 0.55,
+                       scPred_threshold = 0.55,
                        max.iter.harmony = 20,
                        recompute_alignment = TRUE,
                        seed = 66,
@@ -103,7 +103,7 @@ run_scPred <- function(sce_query,
 
   seurat_query <- scPred::scPredict(new = seurat_query,
                                     reference = seurat_ref,
-                                    threshold = threshold,
+                                    threshold = scPred_threshold,
                                     max.iter.harmony = max.iter.harmony,
                                     recompute_alignment = recompute_alignment,
                                     seed = seed

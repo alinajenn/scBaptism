@@ -14,7 +14,7 @@
 #' @param seurat_out output cor matrix or called seurat object (deprecated, use obj_out instead)
 #' @param vec_out only output a result vector in the same order as metadata
 #' @param rename_prefix prefix to add to type and r column names
-#' @param threshold identity calling minimum correlation score threshold, only used when obj_out = TRUE
+#' @param clustifyr_threshold identity calling minimum correlation score threshold, only used when obj_out = TRUE
 #' @param low_threshold_cell option to remove clusters with too few cells
 #' @param exclude_genes a vector of gene names to throw out of query
 #' @param if_log input data is natural log, averaging will be done on unlogged data
@@ -70,7 +70,7 @@ run_clustifyr <- function(sce_query,
                           obj_out = TRUE,
                           seurat_out = obj_out,
                           vec_out = FALSE,
-                          threshold = "auto",
+                          clustifyr_threshold = "auto",
                           rm0 = FALSE,
                           rename_prefix = NULL,
                           exclude_genes = c(),
@@ -113,7 +113,7 @@ run_clustifyr <- function(sce_query,
     obj_out = obj_out,
     seurat_out = seurat_out,
     vec_out = vec_out,
-    threshold = threshold,
+    threshold = clustifyr_threshold,
     rm0 = rm0,
     rename_prefix = rename_prefix,
     exclude_genes = exclude_genes,
