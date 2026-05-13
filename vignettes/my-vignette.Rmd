@@ -44,11 +44,50 @@ The format of your query (aka input data) has to be a SingleCellExperiment objec
 
 2.2 Input format reference and markers_list
 
+Some of the tools included in scBaptism perform the annotation based on a reference and some others use a list of markers. Depending on which tools you want to run one or both if these are needed.
+
+A markers list is required for:
+
+CIA
+SCINA
+CelliDmk (= marker based Version of CelliD)
+
+#anno_referencebased <- c("SingleR", "Seurat", "clustifyr", "scPred", "scClassify", "scmap", "CelliDref")
+  #anno_markerbased <- c("CIA", "SCINA", "CelliDmk")
+
+The markers list must be a nested list with names of genes listed for each cell type.
+
+A reference is required for:
+
+SingleR
+Seurat
+clustifyr
+scPred
+scClassify
+scmap
+CelliDref (= reference based Version of CelliD)
+
+The reference must be a SingleCellExperiment object with an annotation in the colData. You have to pass the name of this column to run_scBaptism in the parameter ref_labs.
+
+
+```{r setup}
+# load example markers list
+
+#for this vignette we will use the labels_main annotation of our example SCE as a reference and perform novel annotation with them on the gene expression data
+
+```
+
 3.1: run_scBaptism
 
-Once you have all the input data, running scBaptism can be done by simply calling the main function run_scBaptism()
+Once you have all the input data ready, running scBaptism can be done by simply calling the main function run_scBaptism()
 ```{r setup}
+#running scBaptism 
 
+result <- run_scBaptism(sce_query = sce_annotated,
+                        anno_methods = c("SingleR", "CIA"),
+                        reference = sce_annotated,
+                        ref_labs = "labels_main",
+                        markers_list = markers)
 
 ```
 
