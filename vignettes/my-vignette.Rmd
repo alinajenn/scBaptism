@@ -18,57 +18,67 @@ knitr::opts_chunk$set(
 library(scBaptism)
 ```
 
-Vignette Structure
+## Contents
 
-#1: Intro: What does scBaptsim do?
+## 1 What is scBaptism and what can it do?
 
-scBaptism is a tool, that enables the user to use multiple existing single cell annotation methods at once (SCINA, CIA, SingleR, Seurat, scPred, scClassify, clustifyr, scmap, CelliD marker based, CelliD reference based), as well as methods to integrate the obtained annotations and options for visualizations. 
+scBaptism is a tool, that enables the user to use multiple existing single cell annotation methods at once (SCINA, CIA, SingleR, Seurat, scPred, scClassify, clustifyr, scmap, CelliD marker based, CelliD reference based), as well as methods to integrate the obtained annotations and options for visualizations.
 
 Single Cell transcriptomic data can be used to identify different cells inside a sample, the so called annotation. Many different tools are available to automatically perform this process. For researchers this poses the challenge of being familiar with many different tools and how to use them at once. scBaptism offers the possibility to run 10 different annotation methods from 9 existing R packages at once and with the same input data. This makes the process of annotating faster and more accessible. Additionally the resulting annotations can be collapsed into one annotation by majority voting and through a meta cell approach.
 
-2.1: Input format query: What does a user need to provide me? (Installation?)
+## 2.1: Input format query
 
 You can install scBaptism directly from github
 
 ```{r setup}
 #development version
 remotes::install_github("alinajenn/scBaptism@run_anno_tools")
+library(scBaptism)
 ```
 
-The format of your query (aka input data) has to be a SingleCellExperiment object (SCE), containing two assays: 'counts' and 'logcounts'. Dimensionality reductions should also be performed: PCA, tSNE & UMAP. If you have an SCE proceed directly to the next step. If you have a raw expression matrix, you can create a SCE like this: 
-
+The format of your query (aka input data) has to be a SingleCellExperiment object (SCE), containing two assays: 'counts' and 'logcounts'. Dimensionality reductions should also be performed: PCA, tSNE & UMAP.
 
 ```{r setup}
+#we are going to use an SCE from the iUSEiSEE package as an example for this vignette
+
+library(iUSEiSEE)
+sce_annotated <- readRDS(file = system.file("datasets", 
+                                            "sce_pbmc3k.RDS", 
+                                            package = "iUSEiSEE"))
 
 ```
 
-2.2 Input format reference and markers_list
+## 2.2 Input format reference and markers list
 
 Some of the tools included in scBaptism perform the annotation based on a reference and some others use a list of markers. Depending on which tools you want to run one or both if these are needed.
 
 A markers list is required for:
 
-CIA
-SCINA
-CelliDmk (= marker based Version of CelliD)
+- CIA
 
-#anno_referencebased <- c("SingleR", "Seurat", "clustifyr", "scPred", "scClassify", "scmap", "CelliDref")
-  #anno_markerbased <- c("CIA", "SCINA", "CelliDmk")
+- SCINA
+
+- CelliDmk (= marker based Version of CelliD)
 
 The markers list must be a nested list with names of genes listed for each cell type.
 
 A reference is required for:
 
-SingleR
-Seurat
-clustifyr
-scPred
-scClassify
-scmap
-CelliDref (= reference based Version of CelliD)
+- SingleR
+
+- Seurat
+
+- clustifyr
+
+- scPred
+
+- scClassify
+
+- scmap
+
+- CelliDref (= reference based Version of CelliD)
 
 The reference must be a SingleCellExperiment object with an annotation in the colData. You have to pass the name of this column to run_scBaptism in the parameter ref_labs.
-
 
 ```{r setup}
 # load example markers list
@@ -77,9 +87,10 @@ The reference must be a SingleCellExperiment object with an annotation in the co
 
 ```
 
-3.1: run_scBaptism
+## 3.1 Perform the annotations
 
 Once you have all the input data ready, running scBaptism can be done by simply calling the main function run_scBaptism()
+
 ```{r setup}
 #running scBaptism 
 
@@ -89,44 +100,73 @@ result <- run_scBaptism(sce_query = sce_annotated,
                         ref_labs = "labels_main",
                         markers_list = markers)
 
+# if you want to run all available annotation, provide this vector:
+anno_methods = c("SingleR", "Seurat", "clustifyr", "scPred", "scClassify", "scmap", "CelliDref", "CIA", "SCINA", "CelliDmk")
+
 ```
 
--basic -[Seurat Issue note] -passing on parameters -
+The return object is your SCE query with the annotation columns added to the colData. All new annotation columns are named following this scheme: "scb_toolname_labels". "scb" stand for scBaptism, so you can easily identify which columns are a result of running run_scBaptism.
 
-3.2 Additional parameters
+-basic -[Seurat Issue note]
 
-Most of the annotation methods scBaptism can run have many parameters to give the user detailed control over how the annotation is performed. When running run_scBaptism the default parameter setting of these tools are used. If you wish the manually control any specific parameter this is possible and you can simply include them in the function call. 
+## 3.2 Configure additional parameters
+
+Most of the annotation methods scBaptism can run have many parameters to give the user detailed control over how the annotation is performed. When running run_scBaptism the default parameter setting of these tools are used. If you wish the manually control any specific parameter this is possible and you can simply include them in the function call.
 
 Some parameters had to be renamed, because otherwise they would get passed on to more then one function. You can still adjust these parameters by using their new name:
 
-Seurat: 
-use Seurat_dims instead of dims
+- Seurat: use Seurat_dims instead of dims
 
-CelliD: 
-use CelliD_dims instead of dims
-use CelliD_features instead of features
+- CelliD: use CelliD_dims instead of dims use CelliD_features instead of features
 
-scClassify:
-use scClassify_features instead of features
+- scClassify: use scClassify_features instead of features
 
-clustifyr:
-use clustifyr_threshold instead of threshold
+- clustifyr: use clustifyr_threshold instead of threshold
 
-scPredict:
-use scPredict_threshold instead of threshold
+- scPredict: use scPredict_threshold instead of threshold
 
-scmap:
-use threshold_Cluster instead of threshold (for the cluster based annotation)
-use threshold_Cell2Cluster instead of threshold (for the cell based annotation)
+- scmap: use threshold_Cluster instead of threshold (for the cluster based annotation), use threshold_Cell2Cluster instead of threshold (for the cell based annotation)
 
 ```{r setup}
 # example: 
 
 ```
 
+## 4 Plots
 
-4: plottings
+The scBaptism package comes with three plotting function to give you a quick way to look at your data:
 
-5: majority voting
+- plot_multiple_tSNE() plots the tSNE for each annotation in individual tiles
 
-6: supercells
+- plot_alluvial() compares the differences between two annotations in an alluvial plot
+
+- plot_confusion_matirx() compares the differences between two annotations in a confusion matrix
+
+```{r setup}
+# Let's plot our example annotations
+
+```
+
+## 5 Integrate ultiple annotations via majority voting
+
+If you have multiple annotations and want to have an annotation that represents a consensus of the majority of the tool you can run the function majority_voting(). For each cell it will return the annotation that occurred the most among all of the tools. In case of a tie you can choose one of these tie breaker rules for the parameter tie_breaker:
+
+- 'first': the annotation from the first tool is assigned to this cell
+- 'concat': all annotation from all tools get concatenated into one string (separated by "\|")
+- 'LCA': annotation assigned is the last common ancestor of all the annotations (via ontoProc package)
+- 'na': tie is marked as NA
+
+The input for this function is a SCE that contains multiple annotations. The parameter anno_columns decides which columns the majority voting will be performed on. You can either provide a vector with the name of all annotation columns or you set it to NULL (also the default) and the function will automatically include all annotations obtained with the run_scBaptism function (every column that starts with "scb" to be precise).
+
+The majority_voting function returns the input SCE object with an additional colData column called "scb_majority_labels".
+
+```{r setup}
+# example: 
+
+
+# plot the majority voting tSNE
+```
+
+## 6 supercells
+
+[still in implementation]
