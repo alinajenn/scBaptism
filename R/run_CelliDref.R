@@ -20,6 +20,7 @@
 #'
 #' @importFrom CelliD RunCellHGT GetCellGeneSet RunMCA
 #' @importFrom SummarizedExperiment colData
+#' @importFrom Seurat as.Seurat ScaleData FindVariableFeatures NormalizeData
 #'
 #' @examples
 #'
