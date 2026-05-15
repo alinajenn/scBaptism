@@ -8,7 +8,7 @@ run_scPred(
   sce_query,
   reference,
   ref_labs,
-  threshold = 0.55,
+  scPred_threshold = 0.55,
   max.iter.harmony = 20,
   recompute_alignment = TRUE,
   seed = 66,
@@ -23,7 +23,7 @@ run_scPred(
 
 \item{ref_labs}{Column from the references colData}
 
-\item{threshold}{Threshold used for probabilities to classify cells into classes. All cells below this threshold value will be labels as "unassigned".}
+\item{scPred_threshold}{Threshold used for probabilities to classify cells into classes. All cells below this threshold value will be labels as "unassigned".}
 
 \item{max.iter.harmony}{Maximum number of rounds to run Harmony. One round of Harmony involves one clustering and one correction step.}
 

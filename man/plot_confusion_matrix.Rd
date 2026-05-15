@@ -19,3 +19,18 @@ confusion matrix comparing the annotation of two selected annotation columns
 \description{
 plot_confusion_matrix
 }
+\examples{
+#load example SCE from iUSEiSEE package
+
+sce_annotated <- readRDS(
+ file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
+
+#plot two of the exisiting annotations
+
+plot <- plot_confusion_matrix(sce_query = sce_annotated,
+                              first_tool = "labels_main",
+                              second_tool = "labels_fine")
+
+plot
+
+}

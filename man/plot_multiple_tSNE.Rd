@@ -17,3 +17,19 @@ plot with all selected annotations plotted with tSNE dimensionality reduction
 \description{
 plot_multiple_tSNE
 }
+\examples{
+#load example SCE from iUSEiSEE package
+
+sce_annotated <- readRDS(
+ file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
+
+#plot two of the exisiting annotations
+
+plot <- plot_multiple_tSNE(sce_query = sce_annotated,
+                          first_tool = "labels_main",
+                          second_tool = "labels_fine")
+
+plot
+
+
+}

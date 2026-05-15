@@ -17,7 +17,7 @@ run_clustifyr(
   obj_out = TRUE,
   seurat_out = obj_out,
   vec_out = FALSE,
-  threshold = "auto",
+  clustifyr_threshold = "auto",
   rm0 = FALSE,
   rename_prefix = NULL,
   exclude_genes = c(),
@@ -52,7 +52,7 @@ run_clustifyr(
 
 \item{vec_out}{only output a result vector in the same order as metadata}
 
-\item{threshold}{identity calling minimum correlation score threshold, only used when obj_out = TRUE}
+\item{clustifyr_threshold}{identity calling minimum correlation score threshold, only used when obj_out = TRUE}
 
 \item{rm0}{consider 0 as missing data, recommended for per_cell}
 

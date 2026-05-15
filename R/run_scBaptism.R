@@ -42,7 +42,7 @@
 #'
 #' #run scBaptism to annotate with SingleR and CIA
 #' anno_result <- run_scBaptism(sce_query = sce_annotated,
-#'                              anno_methods = c("SCINA", "CIA),
+#'                              anno_methods = c("SCINA", "CIA"),
 #'                              markers_list = markers_lists,
 #'                              reference = sce_annotated,
 #'                              ref_labs = "labels_main")
