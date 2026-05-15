@@ -14,10 +14,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-library(scBaptism)
-```
-
 ## Contents
 
 1.  What is scBaptism and what can it do?
@@ -32,7 +28,7 @@ library(scBaptism)
 
 6.  Plots
 
-7.   Integrate multiple annotations via majority voting
+7.  Integrate multiple annotations via majority voting
 
 8.  Metacells
 
@@ -46,7 +42,7 @@ Single Cell transcriptomic data can be used to identify different cells inside a
 
 You can install scBaptism directly from github
 
-```{r setup}
+```{r installation, eval=FALSE}
 #development version
 remotes::install_github("alinajenn/scBaptism@run_anno_tools")
 library(scBaptism)
@@ -54,7 +50,7 @@ library(scBaptism)
 
 The format of your query (aka input data) has to be a SingleCellExperiment object (SCE), containing two assays: 'counts' and 'logcounts'. Dimensionality reductions should also be performed: PCA, tSNE & UMAP.
 
-```{r setup}
+```{r load data}
 #we are going to use an SCE from the iUSEiSEE package as an example for this vignette
 
 library(iUSEiSEE)
@@ -96,7 +92,7 @@ A reference is required for:
 
 The reference must be a SingleCellExperiment object with an annotation in the colData. You have to pass the name of this column to run_scBaptism in the parameter ref_labs.
 
-```{r setup}
+```{r load reference and markers}
 
 #for this vignette we will use the labels_main annotation of our sce_example as a reference and perform new annotation with them on the gene expression data
 
@@ -124,7 +120,8 @@ top_k_markers <- 50
 markers_lists <- seu_all_markers %>%
   dplyr::group_by(cluster) %>%
   dplyr::top_n(n = top_k_markers, wt = avg_log2FC)
-markers_lists <- split(markers_lists$gene, markers_lists$cluster)
+
+markers <- split(markers_lists$gene, markers_lists$cluster)
 
 
 ```
@@ -133,12 +130,14 @@ markers_lists <- split(markers_lists$gene, markers_lists$cluster)
 
 Once you have all the input data ready, running scBaptism can be done by simply calling the main function run_scBaptism()
 
-```{r setup}
+```{r run annotation}
 #running scBaptism 
 
-result <- run_scBaptism(sce_query = sce_annotated,
+library(scBaptism)
+
+result <- run_scBaptism(sce_query = sce_example,
                         anno_methods = c("SingleR", "CIA"),
-                        reference = sce_annotated,
+                        reference = sce_example,
                         ref_labs = "labels_main",
                         markers_list = markers)
 
@@ -169,12 +168,12 @@ Some parameters had to be renamed, because otherwise they would get passed on to
 
 - scmap: use threshold_Cluster instead of threshold (for the cluster based annotation), use threshold_Cell2Cluster instead of threshold (for the cell based annotation)
 
-```{r setup}
+```{r parameters adjustment}
 # example: Same call from above with the parameter unassigned_label of SingleR adjusted to a custom name
 
-result_custom_para <- run_scBaptism(sce_query = sce_annotated,
+result_custom_para <- run_scBaptism(sce_query = sce_example,
                         anno_methods = c("SingleR", "CIA"),
-                        reference = sce_annotated,
+                        reference = sce_example,
                         ref_labs = "labels_main",
                         markers_list = markers,
                         unassigned_label = "Unassigned Cell")
@@ -191,22 +190,22 @@ The scBaptism package comes with three plotting function to give you a quick way
 
 - plot_confusion_matirx() compares the differences between two annotations in a confusion matrix
 
-```{r setup}
+```{r plotting}
 # Let's plot our example annotations from SingleR and CIA
 
-tSNE_plot <- plot_multiple_tSNE(sce_query = sce_annotated,
+tSNE_plot <- scBaptism::plot_multiple_tSNE(sce_query = sce_example,
                                 first_tool = "scb_SingleR_labels",
                                 second_tool = "scb_CIA_labels")
 
 tSNE_plot
 
-matrix_plot <- plot_confusion_matrix(sce_query = sce_annotated,
+matrix_plot <- plot_confusion_matrix(sce_query = sce_example,
                                      first_tool = "scb_SingleR_labels",
                                      second_tool = "scb_CIA_labels")
 
 matrix_plot
 
-alluvial_plot <- plot_alluvial(sce_query = sce_annotated,
+alluvial_plot <- plot_alluvial(sce_query = sce_example,
                                first_tool = "scb_SingleR_labels",
                                second_tool = "scb_CIA_labels",
                                threshold = 0.02)
@@ -220,7 +219,7 @@ alluvial_plot
 If you have multiple annotations and want to have an annotation that represents a consensus of the majority of the tool you can run the function majority_voting(). For each cell it will return the annotation that occurred the most among all of the tools. In case of a tie you can choose one of these tie breaker rules for the parameter tie_breaker:
 
 - 'first': the annotation from the first tool is assigned to this cell
-- 'concat': all annotation from all tools get concatenated into one string (separated by "\|")
+- 'concat': all annotation from all tools get concatenated into one string (separated by "|")
 - 'LCA': annotation assigned is the last common ancestor of all the annotations (via ontoProc package)
 - 'na': tie is marked as NA
 
@@ -228,9 +227,9 @@ The input for this function is a SCE that contains multiple annotations. The par
 
 The majority_voting function returns the input SCE object with an additional colData column called "scb_majority_labels".
 
-```{r setup}
+```{r majority vote}
 # perform a majority vote on all annotations obtained through scBaptism, with choosing the first element in case of a tie
-sce_annotated <- majority_vote(sce_query = sce_annotated, 
+sce_annotated <- majority_vote(sce_query = sce_example, 
                                anno_columns = NULL, 
                                tie_breaker = "first")
 
