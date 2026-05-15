@@ -15,16 +15,6 @@
 #'
 .get_winner <- function(input_row, tie_breaker = "concat", cl_graph = NULL) {
 
-  # if(tie_breaker == "LCA") {
-  #   cl_g <- ontoProc::getOnto()
-  #
-  #   parents <- cl_g$parents
-  #   self <- rep(names(parents), lengths(parents))
-  #
-  #   cl_graph <- igraph::make_graph(rbind(unlist(parents), self))
-  # }
-
-
   #rank all values in that row & get highest rank
   rank_table <- table(input_row)
   winner <- max(rank_table)
