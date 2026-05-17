@@ -2,7 +2,7 @@
 
 export(convertToSCN)
 export(majority_vote)
-export(plot_allivial)
+export(plot_alluvial)
 export(plot_confusion_matrix)
 export(plot_multiple_tSNE)
 export(run_CIA)
