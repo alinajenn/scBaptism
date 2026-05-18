@@ -193,7 +193,7 @@ The scBaptism package comes with three plotting function to give you a quick way
 ```{r plotting}
 # Let's plot our example annotations from SingleR and CIA
 
-tSNE_plot <- scBaptism::plot_multiple_tSNE(sce_query = sce_example,
+tSNE_plot <- plot_multiple_tSNE(sce_query = sce_example,
                                 first_tool = "scb_SingleR_labels",
                                 second_tool = "scb_CIA_labels")
 
