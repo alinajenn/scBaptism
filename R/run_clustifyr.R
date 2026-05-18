@@ -3,7 +3,8 @@
 #' @param sce_query SCE to be annotated
 #' @param reference SCE object that acts as a reference
 #' @param ref_labs List of gene labels or column from the references colData
-#' @param query_genesnA vector of genes of interest to compare. If NULL, then common genes between the expr_mat and ref_mat will be used for comparision.
+#' @param clusters name of clusters in the query
+#' @param query_genes vector of genes of interest to compare. If NULL, then common genes between the expr_mat and ref_mat will be used for comparision.
 #' @param n_genes number of genes limit for Seurat variable genes, by default 1000, set to 0 to use all variable genes (generally not recommended)
 #' @param per_cell if true run per cell, otherwise per cluster.
 #' @param n_perm number of permutations, set to 0 by default
@@ -61,6 +62,7 @@
 run_clustifyr <- function(sce_query,
                           reference,
                           ref_labs,
+                          clusters,
                           query_genes = NULL,
                           per_cell = FALSE,
                           n_perm = 0,
@@ -95,7 +97,7 @@ run_clustifyr <- function(sce_query,
 
   transf_ref <- clustifyr::object_ref(
     input = reference,
-    cluster_col = ref_labs # they call it cluster_col, but ask for cell identities
+    cluster_col = ref_labs # they call it cluster_col, but ask for cell identities in the tutorial
   )
 
 
@@ -104,7 +106,7 @@ run_clustifyr <- function(sce_query,
   sce_query <- clustifyr::clustify(
     input = sce_query,
     ref_mat = transf_ref,
-    cluster_col = ref_labs,
+    cluster_col = clusters, #actual cluster information
     per_cell = per_cell,
     n_perm = n_perm,
     compute_method = compute_method,

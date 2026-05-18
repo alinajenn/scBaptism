@@ -5,6 +5,7 @@
 #' @param markers_list list of marker genes
 #' @param reference SingleCellExperiment object with annotation information column
 #' @param ref_labs name of column with annotation information
+#' @param clusters name of clusters in the query
 #' @param return_extra_info if TRUE, adds additional metadata from the annotation when available
 #' @param verbose display message after each annotation is finished
 #' @param ... further arguments passed to other methods
@@ -54,6 +55,7 @@ run_scBaptism <- function(sce_query = NULL,
                           markers_list = NULL,
                           reference = NULL,
                           ref_labs = NULL,
+                          clusters = NULL,
                           verbose = FALSE,
                           return_extra_info = FALSE,
                           ...){
@@ -140,6 +142,7 @@ run_scBaptism <- function(sce_query = NULL,
                                        c(list(sce_query = sce_query,
                                               reference = reference,
                                               ref_labs = ref_labs,
+                                              clusters = clusters,
                                               verbose = verbose),
                                          args_clustifyr)),
 

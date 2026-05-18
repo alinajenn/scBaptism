@@ -10,6 +10,7 @@ run_scBaptism(
   markers_list = NULL,
   reference = NULL,
   ref_labs = NULL,
+  clusters = NULL,
   verbose = FALSE,
   return_extra_info = FALSE,
   ...
@@ -25,6 +26,8 @@ run_scBaptism(
 \item{reference}{SingleCellExperiment object with annotation information column}
 
 \item{ref_labs}{name of column with annotation information}
+
+\item{clusters}{name of clusters in the query}
 
 \item{verbose}{display message after each annotation is finished}
 

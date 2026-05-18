@@ -8,6 +8,7 @@ run_clustifyr(
   sce_query,
   reference,
   ref_labs,
+  clusters,
   query_genes = NULL,
   per_cell = FALSE,
   n_perm = 0,
@@ -35,6 +36,10 @@ run_clustifyr(
 \item{reference}{SCE object that acts as a reference}
 
 \item{ref_labs}{List of gene labels or column from the references colData}
+
+\item{clusters}{name of clusters in the query}
+
+\item{query_genes}{vector of genes of interest to compare. If NULL, then common genes between the expr_mat and ref_mat will be used for comparision.}
 
 \item{per_cell}{if true run per cell, otherwise per cluster.}
 
@@ -69,8 +74,6 @@ run_clustifyr(
 \item{expand_unassigned}{test all ref clusters for unassigned results}
 
 \item{verbose}{display message after annotation is finished}
-
-\item{query_genesnA}{vector of genes of interest to compare. If NULL, then common genes between the expr_mat and ref_mat will be used for comparision.}
 
 \item{n_genes}{number of genes limit for Seurat variable genes, by default 1000, set to 0 to use all variable genes (generally not recommended)}
 
