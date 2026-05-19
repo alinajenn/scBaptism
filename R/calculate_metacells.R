@@ -1,6 +1,31 @@
-# metacellify function
-# make MCs before running any annotation
-
+#' calculate_metacells
+#'
+#' @param sce_query SingleCellExperiment object with logcounts to calculate metacells on
+#' @param gamma set the graining level for the metacells, aka proportion of single cells to meta cells
+#'
+#' @importFrom SummarizedExperiment assay ncol colData
+#' @importFrom scater plotTSNE runPCA
+#' @importFrom SuperCell SCimplify supercell_GE
+#' @importFrom SingleCellExperiment SingleCellExperiment
+#' @importFrom scran buildSNNGraph
+#' @importFrom igraph cluster_walktrap
+#'
+#' @returns SCE with logcounts on metacell level, also clusters, PCA & tSNE
+#'
+#' @export
+#'
+#' @examples
+#' #load example SCE from iUSEiSEE package
+#'
+#' sce_annotated <- readRDS(
+#'  file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
+#'
+#' sce_metacells <- calculate_metacells(sce_query = sce_annotated,
+#'                                      gamma = 10)
+#'
+#' sce_metacells
+#'
+#'
 calculate_metacells <- function(sce_query,
                                 gamma = 10 #SCimplify graining level
                                 ){  ##give options for parameter customization (gamma, mode)
