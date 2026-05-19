@@ -1,10 +1,12 @@
 ---
 title: "Perform Multiple Annotations at Once with scBaptism"
+author: Alina Jenn
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Perform Multiple Annotations at Once with scBaptism}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{scBaptism}
 ---
 
 ```{r, include = FALSE}
@@ -38,15 +40,22 @@ scBaptism is a tool, that enables the user to use multiple existing single cell 
 
 Single Cell transcriptomic data can be used to identify different cells inside a sample, the so called annotation. Many different tools are available to automatically perform this process. For researchers this poses the challenge of being familiar with many different tools and how to use them at once. scBaptism offers the possibility to run 10 different annotation methods from 9 existing R packages at once and with the same input data. This makes the process of annotating faster and more accessible. Additionally the resulting annotations can be collapsed into one annotation by majority voting and through a meta cell approach.
 
-## 2  Input format query
+## 2 Install the package
 
 You can install scBaptism directly from github
 
 ```{r installation, eval=FALSE}
 #development version
 remotes::install_github("alinajenn/scBaptism@run_anno_tools")
-library(scBaptism)
 ```
+
+Load the package
+
+```{r setup, eval=TRUE}
+library("scBaptism")
+```
+
+## 3 Input format query
 
 The format of your query (aka input data) has to be a SingleCellExperiment object (SCE), containing two assays: 'counts' and 'logcounts'. Dimensionality reductions should also be performed: PCA, tSNE & UMAP.
 
@@ -193,19 +202,18 @@ The scBaptism package comes with three plotting function to give you a quick way
 ```{r plotting}
 # Let's plot our example annotations from SingleR and CIA
 
-tSNE_plot <- plot_multiple_tSNE(sce_query = sce_example,
-                                first_tool = "scb_SingleR_labels",
-                                second_tool = "scb_CIA_labels")
+tSNE_plot <- plot_multiple_tSNE(sce_query = result,
+                               labels_vector = c("scb_SingleR_labels", "scb_CIA_labels"))
 
 tSNE_plot
 
-matrix_plot <- plot_confusion_matrix(sce_query = sce_example,
+matrix_plot <- plot_confusion_matrix(sce_query = result,
                                      first_tool = "scb_SingleR_labels",
                                      second_tool = "scb_CIA_labels")
 
 matrix_plot
 
-alluvial_plot <- plot_alluvial(sce_query = sce_example,
+alluvial_plot <- plot_alluvial(sce_query = result,
                                first_tool = "scb_SingleR_labels",
                                second_tool = "scb_CIA_labels",
                                threshold = 0.02)
@@ -219,7 +227,7 @@ alluvial_plot
 If you have multiple annotations and want to have an annotation that represents a consensus of the majority of the tool you can run the function majority_voting(). For each cell it will return the annotation that occurred the most among all of the tools. In case of a tie you can choose one of these tie breaker rules for the parameter tie_breaker:
 
 - 'first': the annotation from the first tool is assigned to this cell
-- 'concat': all annotation from all tools get concatenated into one string (separated by "|")
+- 'concat': all annotation from all tools get concatenated into one string (separated by "\|")
 - 'LCA': annotation assigned is the last common ancestor of all the annotations (via ontoProc package)
 - 'na': tie is marked as NA
 
@@ -229,15 +237,23 @@ The majority_voting function returns the input SCE object with an additional col
 
 ```{r majority vote}
 # perform a majority vote on all annotations obtained through scBaptism, with choosing the first element in case of a tie
-sce_annotated <- majority_vote(sce_query = sce_example, 
+result_mv <- majority_vote(sce_query = result, 
                                anno_columns = NULL, 
                                tie_breaker = "first")
 
 # plot the majority vote annotation tSNE
-scater::plotTSNE(sce_annotated, color_by = "scb_majority_labels")
+scater::plotTSNE(result_mv, color_by = "scb_majority_labels")
 
 ```
 
 ## 8 Metacells
 
 [still in implementation stage]
+
+## 9 Session Info
+
+```{r sessioinfo}
+#| class-output: smaller
+
+sessionInfo()
+```
