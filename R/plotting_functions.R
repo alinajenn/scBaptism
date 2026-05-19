@@ -98,10 +98,10 @@ return(plot)
 #' @param second_tool name of the second annotation column in the colData of sce_query
 #' @param threshold number defining below which percentage of occurrence cells get filtered out (default 0.02, so 2%)
 #'
-#' @importFrom ggplot2 ggplot aes labs theme element_blank
+#' @importFrom ggplot2 ggplot aes labs theme element_blank after_stat geom_text
 #' @importFrom dplyr count filter mutate
 #' @importFrom magrittr %>%
-#' @importFrom ggalluvial geom_alluvium
+#' @importFrom ggalluvial geom_alluvium StatStratum
 #' @importFrom cowplot theme_minimal_hgrid
 #'
 #' @returns alluvial plot comparing the annotation of two selected annotation columns
@@ -154,11 +154,11 @@ plot_alluvial <- function(sce_query, first_tool, second_tool, threshold = 0.02) 
     dplyr::count(first_anno, second_anno)
 
 
-  ggplot2::ggplot(df_agg,
+  plot <- ggplot2::ggplot(df_agg,
                   ggplot2::aes(axis1 = first_anno, axis2 = second_anno, y = n)) +
     ggalluvial::geom_alluvium(ggplot2::aes(fill = first_anno)) +
     ggalluvial::geom_stratum() +
-    ggplot2::geom_text(stat = "stratum",
+    ggplot2::geom_text(stat = ggalluvial::StatStratum,
                        ggplot2::aes(label = ggplot2::after_stat(stratum)),
                        size = 2.5) +
     cowplot::theme_minimal_hgrid() +
@@ -169,5 +169,7 @@ plot_alluvial <- function(sce_query, first_tool, second_tool, threshold = 0.02) 
          y = "Number of cells",
          title = "Comparing annotations",
        fill = "Cell type")
+
+  return(plot)
 }
 
