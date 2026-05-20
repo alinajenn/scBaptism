@@ -28,7 +28,7 @@
 #'
 calculate_metacells <- function(sce_query,
                                 gamma = 10 #SCimplify graining level
-                                ){  ##give options for parameter customization (gamma, mode)
+                                ){
 
   #get the log normalized expression matrix
 
