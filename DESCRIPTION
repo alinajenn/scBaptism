@@ -32,7 +32,9 @@ Imports:
     scater,
     cowplot,
     ggplot2,
-    ggalluvial
+    ggalluvial,
+    SuperCell,
+    scran
 Suggests: 
     knitr,
     rmarkdown,

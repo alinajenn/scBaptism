@@ -26,8 +26,7 @@ sce_annotated <- readRDS(
 #plot two of the exisiting annotations
 
 plot <- plot_multiple_tSNE(sce_query = sce_annotated,
-                          first_tool = "labels_main",
-                          second_tool = "labels_fine")
+                          labels_vector = c("labels_main", "labels_fine"))
 
 plot
 

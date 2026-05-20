@@ -3,7 +3,6 @@
 #' @param sce_query SCE to be annotated
 #' @param reference SCE object that acts as a reference
 #' @param ref_labs Column from the references colData
-#' @param selectFeatures string vector deciding which methods to use for feature selection during training. Defaults to "limma", other options:"DV", "DD", "chisq", "BI", "Cepo"
 #' @param cellTypes_test A list or a vector indicates cell types of the query datasets (Optional).
 #' @param k An integer indicates the number of neighbors
 #' @param prob_threshold A numeric indicates the probability threshold for KNN/WKNN/DWKNN.
@@ -11,8 +10,8 @@
 #' @param cor_threshold_high A numeric indicates the highest correlation threshold
 #' @param scClassify_features A vector indicates the gene selection method, set as "limma" by default. This should be one or more of "limma", "DV", "DD", "chisq", "BI".
 #' @param algorithm A vector indicates the KNN method that are used, set as "WKNN" by default. This should be one or more of "WKNN", "KNN", "DWKNN".
-#' @param similarityvA vector indicates the similarity measure that are used, set as "pearson" by default. This should be one or more of "pearson", "spearman", "cosine", "jaccard", "kendall", "binomial", "weighted_rank","manhattan"
-#' @param cutoff_methodvA vector indicates the method to cutoff the correlation distribution. Set as "dynamic" by default.
+#' @param similarity A vector indicates the similarity measure that are used, set as "pearson" by default. This should be one or more of "pearson", "spearman", "cosine", "jaccard", "kendall", "binomial", "weighted_rank","manhattan"
+#' @param cutoff_method A vector indicates the method to cutoff the correlation distribution.
 #' @param weighted_ensemble A logical input indicates in ensemble learning, whether the results is combined by a weighted score for each base classifier.
 #' @param weights A vector indicates the weights for ensemble
 #' @param parallel A logical input indicates whether running in paralllel or not

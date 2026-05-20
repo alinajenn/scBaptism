@@ -10,19 +10,20 @@ run_clustifyr(
   ref_labs,
   clusters,
   query_genes = NULL,
+  n_genes = 1000,
   per_cell = FALSE,
   n_perm = 0,
   compute_method = "spearman",
   pseudobulk_method = "mean",
   dr = "umap",
   obj_out = TRUE,
-  seurat_out = obj_out,
   vec_out = FALSE,
   clustifyr_threshold = "auto",
   rm0 = FALSE,
   rename_prefix = NULL,
+  low_threshold_cell = 0,
   exclude_genes = c(),
-  metadata = NULL,
+  if_log = TRUE,
   organism = "hsapiens",
   plot_name = NULL,
   rds_name = NULL,
@@ -41,6 +42,8 @@ run_clustifyr(
 
 \item{query_genes}{vector of genes of interest to compare. If NULL, then common genes between the expr_mat and ref_mat will be used for comparision.}
 
+\item{n_genes}{number of genes limit for Seurat variable genes, by default 1000}
+
 \item{per_cell}{if true run per cell, otherwise per cluster.}
 
 \item{n_perm}{number of permutations, set to 0 by default}
@@ -53,8 +56,6 @@ run_clustifyr(
 
 \item{obj_out}{whether to output object instead of cor matrix}
 
-\item{seurat_out}{output cor matrix or called seurat object (deprecated, use obj_out instead)}
-
 \item{vec_out}{only output a result vector in the same order as metadata}
 
 \item{clustifyr_threshold}{identity calling minimum correlation score threshold, only used when obj_out = TRUE}
@@ -63,7 +64,11 @@ run_clustifyr(
 
 \item{rename_prefix}{prefix to add to type and r column names}
 
+\item{low_threshold_cell}{option to remove clusters with too few cells}
+
 \item{exclude_genes}{a vector of gene names to throw out of query}
+
+\item{if_log}{input data is natural log, averaging will be done on unlogged data}
 
 \item{organism}{for GO term analysis, organism name: human - 'hsapiens', mouse - 'mmusculus'}
 
@@ -74,14 +79,6 @@ run_clustifyr(
 \item{expand_unassigned}{test all ref clusters for unassigned results}
 
 \item{verbose}{display message after annotation is finished}
-
-\item{n_genes}{number of genes limit for Seurat variable genes, by default 1000, set to 0 to use all variable genes (generally not recommended)}
-
-\item{low_threshold_cell}{option to remove clusters with too few cells}
-
-\item{if_log}{input data is natural log, averaging will be done on unlogged data}
-
-\item{use_var_genes}{if providing a seurat object, use the variable genes (stored in seurat_object@var.genes) as the query_genes.}
 }
 \value{
 sce_query a SingleCellExperiment object, with the extra info on the

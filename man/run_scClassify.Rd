@@ -46,6 +46,10 @@ run_scClassify(
 
 \item{algorithm}{A vector indicates the KNN method that are used, set as "WKNN" by default. This should be one or more of "WKNN", "KNN", "DWKNN".}
 
+\item{similarity}{A vector indicates the similarity measure that are used, set as "pearson" by default. This should be one or more of "pearson", "spearman", "cosine", "jaccard", "kendall", "binomial", "weighted_rank","manhattan"}
+
+\item{cutoff_method}{A vector indicates the method to cutoff the correlation distribution.}
+
 \item{weighted_ensemble}{A logical input indicates in ensemble learning, whether the results is combined by a weighted score for each base classifier.}
 
 \item{weights}{A vector indicates the weights for ensemble}
@@ -57,12 +61,6 @@ run_scClassify(
 \item{return_extra_info}{if TRUE, adds additional metadata from the annotation}
 
 \item{verbose}{display message after annotation is finished}
-
-\item{selectFeatures}{string vector deciding which methods to use for feature selection during training. Defaults to "limma", other options:"DV", "DD", "chisq", "BI", "Cepo"}
-
-\item{similarityvA}{vector indicates the similarity measure that are used, set as "pearson" by default. This should be one or more of "pearson", "spearman", "cosine", "jaccard", "kendall", "binomial", "weighted_rank","manhattan"}
-
-\item{cutoff_methodvA}{vector indicates the method to cutoff the correlation distribution. Set as "dynamic" by default.}
 }
 \value{
 sce_query a SingleCellExperiment object, with the extra info on the

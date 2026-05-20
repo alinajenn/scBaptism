@@ -23,13 +23,21 @@ majority_vote
 
 # loading example dataset, will also serve as a reference
 library(iUSEiSEE)
-sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
+sce_annotated <- readRDS(file = system.file("datasets",
+                                            "sce_pbmc3k.RDS",
+                                            package = "iUSEiSEE"))
 
 # use scBaptism to get several single cell annotations
-sce_annotated <- run_scBaptism(sce_query = sce_annotated, anno_methods = c("clustifyr", "scPred", "scClassify"), reference = sce_annotate, ref_labs = "labels_main")
+sce_annotated <- run_scBaptism(sce_query = sce_annotated,
+                               anno_methods = c("CelliDref", "SingleR", "scClassify"),
+                               reference = sce_annotated,
+                               ref_labs = "labels_main")
 
-# perform a majority vote on all annotations obtained through scBaptism, with choosing the first element in case of a tie
-sce_annotated <- majority_vote(sce_query = sce_annotated, anno_columns = NULL, tie_breaker = "first")
+# perform a majority vote on all annotations obtained through scBaptism
+# with choosing the first annotation in case of a tie
+sce_annotated <- majority_vote(sce_query = sce_annotated,
+                               anno_columns = NULL,
+                               tie_breaker = "first")
 
 # plot the majority vote annotation
 scater::plotTSNE(sce_annotated, color_by = "scb_majority_labels")

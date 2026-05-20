@@ -5,14 +5,13 @@
 #' @param ref_labs List of gene labels or column from the references colData
 #' @param clusters name of clusters in the query
 #' @param query_genes vector of genes of interest to compare. If NULL, then common genes between the expr_mat and ref_mat will be used for comparision.
-#' @param n_genes number of genes limit for Seurat variable genes, by default 1000, set to 0 to use all variable genes (generally not recommended)
+#' @param n_genes number of genes limit for Seurat variable genes, by default 1000
 #' @param per_cell if true run per cell, otherwise per cluster.
 #' @param n_perm number of permutations, set to 0 by default
 #' @param compute_method method(s) for computing similarity scores
 #' @param pseudobulk_method method used for summarizing clusters, options are mean (default), median, truncate (10% truncated mean), or trimean, max, min
 #' @param rm0	consider 0 as missing data, recommended for per_cell
 #' @param obj_out whether to output object instead of cor matrix
-#' @param seurat_out output cor matrix or called seurat object (deprecated, use obj_out instead)
 #' @param vec_out only output a result vector in the same order as metadata
 #' @param rename_prefix prefix to add to type and r column names
 #' @param clustifyr_threshold identity calling minimum correlation score threshold, only used when obj_out = TRUE
@@ -23,8 +22,7 @@
 #' @param plot_name name for saved pdf, if NULL then no file is written (default)
 #' @param rds_name name for saved rds of rank_diff, if NULL then no file is written (default)
 #' @param expand_unassigned test all ref clusters for unassigned results
-#' @param use_var_genes if providing a seurat object, use the variable genes (stored in seurat_object@var.genes) as the query_genes.
-#' @param dr	stored dimension reduction
+#' @param dr stored dimension reduction
 #' @param verbose display message after annotation is finished
 #'
 #'
@@ -51,7 +49,8 @@
 #' #run the annotation
 #' sce_annotated <- run_clustifyr(sce_query = sce_annotated,
 #'                                reference = sce_annotated,
-#'                                ref_labs = "labels_main")
+#'                                ref_labs = "labels_main",
+#'                                clusters = "Cluster")
 #'
 #' #plot the existing annotation with scater(t-SNE)
 #' scater::plotTSNE(sce_annotated, color_by = "scb_clustifyr_labels")
@@ -64,19 +63,20 @@ run_clustifyr <- function(sce_query,
                           ref_labs,
                           clusters,
                           query_genes = NULL,
+                          n_genes = 1000,
                           per_cell = FALSE,
                           n_perm = 0,
                           compute_method = "spearman",
                           pseudobulk_method = "mean",
                           dr = "umap",
                           obj_out = TRUE,
-                          seurat_out = obj_out,
                           vec_out = FALSE,
                           clustifyr_threshold = "auto",
                           rm0 = FALSE,
                           rename_prefix = NULL,
+                          low_threshold_cell = 0,
                           exclude_genes = c(),
-                          metadata = NULL,
+                          if_log = TRUE,
                           organism = "hsapiens",
                           plot_name = NULL,
                           rds_name = NULL,
@@ -107,19 +107,20 @@ run_clustifyr <- function(sce_query,
     input = sce_query,
     ref_mat = transf_ref,
     cluster_col = clusters, #actual cluster information
+    n_genes = n_genes,
     per_cell = per_cell,
     n_perm = n_perm,
     compute_method = compute_method,
     pseudobulk_method = pseudobulk_method,
     dr = dr,
     obj_out = obj_out,
-    seurat_out = seurat_out,
     vec_out = vec_out,
     threshold = clustifyr_threshold,
     rm0 = rm0,
     rename_prefix = rename_prefix,
+    low_threshold_cell = low_threshold_cell,
     exclude_genes = exclude_genes,
-    metadata = metadata,
+    if_log = if_log,
     organism = organism,
     plot_name = plot_name,
     rds_name = rds_name ,
