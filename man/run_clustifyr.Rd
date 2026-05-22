@@ -100,7 +100,8 @@ sce_annotated <- readRDS(file = system.file("datasets", "sce_pbmc3k.RDS", packag
 #run the annotation
 sce_annotated <- run_clustifyr(sce_query = sce_annotated,
                                reference = sce_annotated,
-                               ref_labs = "labels_main")
+                               ref_labs = "labels_main",
+                               clusters = "Cluster")
 
 #plot the existing annotation with scater(t-SNE)
 scater::plotTSNE(sce_annotated, color_by = "scb_clustifyr_labels")
