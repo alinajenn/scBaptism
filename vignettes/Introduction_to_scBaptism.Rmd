@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 
 1.  What is scBaptism and what can it do?
 
-2.  Install the package 
+2.  Install the package
 
 3.  Input format query
 
@@ -61,7 +61,7 @@ library("scBaptism")
 
 ## 3 Input format query
 
-The format of your query (aka input data) has to be a SingleCellExperiment object (SCE), containing two assays: 'counts' and 'logcounts'. Dimensionality reductions should also be performed: PCA and tSNE for plotting later on. (The tool clustifyr also requires cluster information to be present).
+The format of your query (aka input data) has to be a SingleCellExperiment object (SCE), containing two assays: 'counts' and 'logcounts'. Dimensionality reductions should also be performed: PCA and tSNE for plotting later on. (The tool clustifyr also requires cluster information to be present in the colData and for the user to provide the name of this).
 
 ```{r load data}
 #we are going to use an SCE from the iUSEiSEE package as an example for this vignette
@@ -252,10 +252,9 @@ scater::plotTSNE(result_mv, color_by = "scb_majority_labels")
 
 ## 9 Metacells
 
-Another way to gain different insights into your data is to agglomerate your single cell data into so-called metacells. 
+Another way to gain different insights into your data is to agglomerate your single cell data into so-called metacells.
 
-Metacells typically capture the expression data of around 10 to 50 single cells. This is a way to reduce noise in your data and also work with a smaller data set. In the scBaptism package, you can turn your single cell level data into metacells data by simply calling the calculate_metacells() function. This returns a SingleCellExperiment object for you with a gene expression matrix of log counts that represent Meta-cells. Additionally, PCA, T, S, and E, and clusters are also calculated for further usage. The function takes two parameters: The first is simply your query data in the form of a SingleCellExperiment object. The second parameter gamma decides the graining level. A graining level of 10 would mean that 10 single cells get combined into one metacell. 
-
+Metacells typically capture the expression data of around 10 to 50 single cells. This is a way to reduce noise in your data and also work with a smaller data set. In the scBaptism package, you can turn your single cell level data into metacells data by simply calling the calculate_metacells() function. This returns a SingleCellExperiment object for you with a gene expression matrix of log counts that represent Meta-cells. Additionally, PCA, T, S, and E, and clusters are also calculated for further usage. The function takes two parameters: The first is simply your query data in the form of a SingleCellExperiment object. The second parameter gamma decides the graining level. A graining level of 10 would mean that 10 single cells get combined into one metacell.
 
 ```{r metacells}
 sce_metacells <- calculate_metacells(sce_query = sce_example,
