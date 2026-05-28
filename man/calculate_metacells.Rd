@@ -4,12 +4,16 @@
 \alias{calculate_metacells}
 \title{calculate_metacells}
 \usage{
-calculate_metacells(sce_query, gamma = 10)
+calculate_metacells(sce_query, annotation_col = NULL, gamma = 10, n.pc = 10)
 }
 \arguments{
 \item{sce_query}{SingleCellExperiment object with logcounts to calculate metacells on}
 
+\item{annotation_col}{name of annotation column in sce_query, set to NULL if no annotation should be transferred to metacell level}
+
 \item{gamma}{set the graining level for the metacells, aka proportion of single cells to meta cells}
+
+\item{n.pc}{number of PCAs to be used during the calculation of the metacell identities, default is 10}
 }
 \value{
 SCE with logcounts on metacell level, also clusters, PCA & tSNE
@@ -18,13 +22,14 @@ SCE with logcounts on metacell level, also clusters, PCA & tSNE
 calculate_metacells
 }
 \examples{
+# create a SCE on metacell level without prior annotation
 #load example SCE from iUSEiSEE package
 
 sce_annotated <- readRDS(
  file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 
 sce_metacells <- calculate_metacells(sce_query = sce_annotated,
-                                     gamma = 10)
+                                     annotation_col = NULL)
 
 sce_metacells
 

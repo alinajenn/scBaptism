@@ -1,12 +1,12 @@
 #' calculate_metacells
 #'
 #' @param sce_query SingleCellExperiment object with logcounts to calculate metacells on
+#' @param annotation_col name of annotation column in sce_query, set to NULL if no annotation should be transferred to metacell level
 #' @param gamma set the graining level for the metacells, aka proportion of single cells to meta cells
+#' @param n.pc number of PCAs to be used during the calculation of the metacell identities, default is 10
 #'
-#' @importFrom SummarizedExperiment assay ncol colData
-#' @importFrom scater plotTSNE runPCA
-#' @importFrom SuperCell SCimplify supercell_GE
-#' @importFrom SingleCellExperiment SingleCellExperiment
+#' @importFrom SummarizedExperiment assay colData
+#' @importFrom SuperCell SCimplify supercell_GE supercell_2_sce
 #' @importFrom scran buildSNNGraph
 #' @importFrom igraph cluster_walktrap
 #'
@@ -15,19 +15,22 @@
 #' @export
 #'
 #' @examples
+#' # create a SCE on metacell level without prior annotation
 #' #load example SCE from iUSEiSEE package
 #'
 #' sce_annotated <- readRDS(
 #'  file = system.file("datasets", "sce_pbmc3k.RDS", package = "iUSEiSEE"))
 #'
 #' sce_metacells <- calculate_metacells(sce_query = sce_annotated,
-#'                                      gamma = 10)
+#'                                      annotation_col = NULL)
 #'
 #' sce_metacells
 #'
 #'
 calculate_metacells <- function(sce_query,
-                                gamma = 10 #SCimplify graining level
+                                annotation_col = NULL,
+                                gamma = 10, #SCimplify graining level
+                                n.pc = 10
                                 ){
 
   #get the log normalized expression matrix
@@ -36,8 +39,18 @@ calculate_metacells <- function(sce_query,
 
   #run the metacell calculations, metacell identity for each single cell
 
-  mc_identity <- SuperCell::SCimplify(X = query_matrix,
-                                      gamma = gamma)
+  #with or without existing annotation
+
+  if (!is.null(annotation_col)) {
+    mc_identity <- SuperCell::SCimplify(X = query_matrix,
+                                       cell.annotation = sce_query[[annotation_col]],
+                                       gamma = gamma,
+                                       n.pc = n.pc)
+  } else {
+    mc_identity <- SuperCell::SCimplify(X = query_matrix,
+                                        gamma = gamma,
+                                        n.pc = n.pc)
+  }
 
   #get average gene expression for each metacell, in matrix format
 
@@ -46,14 +59,14 @@ calculate_metacells <- function(sce_query,
                                        mode = "average")
 
 
-  #create new SCE with the metacell expression matrix
-  sce_metacells <- SingleCellExperiment::SingleCellExperiment(assays = list(logcounts = mc_matrix))
+  sce_metacells <- SuperCell::supercell_2_sce(SC.GE = mc_matrix,
+                                              SC = mc_identity)
 
-  #add cellnames (needed for running scClassify)
-  colnames(sce_metacells) <- paste0("cell_", seq_len(SummarizedExperiment::ncol(sce_metacells)))
+  #add the annotation to SCE, if provided
 
-  #run PCA
-  sce_metacells <- scater::runPCA(sce_metacells)
+  if (is.null(annotation_col)) {
+    SummarizedExperiment::colData(sce_metacells)$annotation <- mc_identity$SC.cell.annotation.
+  }
 
   #calculate clusters (needed for running clustifyr)
   graph <- scran::buildSNNGraph(sce_metacells, k=10, use.dimred = 'PCA')
