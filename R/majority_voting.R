@@ -49,6 +49,8 @@
 #'
 #' @importFrom rols OlsSearch olsSearch
 #' @importFrom ontoProc findCommonAncestors
+#' @importFrom igraph V
+#' @importFrom stats na.omit
 #'
 #' @returns sce_query: SCE object with an added metadata column for the majority annotation
 #'
