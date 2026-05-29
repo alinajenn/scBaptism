@@ -46,6 +46,7 @@ plot_multiple_tSNE <- function(sce_query, labels_vector) {
 #' @param second_tool name of the second annotation column in the colData of sce_query
 #'
 #' @importFrom ggplot2 ggplot aes geom_tile scale_fill_gradient labs theme_minimal
+#' @importFrom rlang .data
 #'
 #' @returns confusion matrix comparing the annotation of two selected annotation columns
 #'
@@ -73,14 +74,14 @@ plot_confusion_matrix <- function(sce_query, first_tool, second_tool) {
 
   #plot the confusion matrix
   plot <- as.data.frame(anno_table) |>
-          ggplot2::ggplot(ggplot2::aes(x = Var2, y = Var1)) +
-          ggplot2::geom_tile(ggplot2::aes(fill = Freq)) +
-          ggplot2::scale_fill_gradient(low = "white", high = "red") +
-          ggplot2::labs(x = first_tool,
-                       y = second_tool,
-                       title = "Comparing annotations",
-                       fill = "Number of cells") +
-          ggplot2::theme_minimal()
+    ggplot2::ggplot(ggplot2::aes(x = .data[[Var2]], y = .data[[Var1]])) +
+    ggplot2::geom_tile(ggplot2::aes(fill = .data[[Freq]])) +
+    ggplot2::scale_fill_gradient(low = "white", high = "red") +
+    ggplot2::labs(x = first_tool,
+                  y = second_tool,
+                  title = "Comparing annotations",
+                  fill = "Number of cells") +
+    ggplot2::theme_minimal()
 
 
 return(plot)
@@ -102,6 +103,7 @@ return(plot)
 #' @importFrom magrittr %>%
 #' @importFrom ggalluvial geom_alluvium StatStratum
 #' @importFrom cowplot theme_minimal_hgrid
+#' @importFrom rlang .data
 #'
 #' @returns alluvial plot comparing the annotation of two selected annotation columns
 #'
@@ -131,16 +133,16 @@ plot_alluvial <- function(sce_query, first_tool, second_tool, threshold = 0.02) 
     )
 
   filtered_first <- df_compare %>%
-    dplyr::count(first_anno) %>%
-    dplyr::mutate(prop = n / sum(n)) %>%
-    dplyr::filter(prop < threshold) %>%
-    dplyr::pull(first_anno)
+    dplyr::count(.data[[first_anno]]) %>%
+    dplyr::mutate(prop = .data[[n]] / sum(.data[[n]])) %>%
+    dplyr::filter(.data[[prop]] < threshold) %>%
+    dplyr::pull(.data[[first_anno]])
 
   filtered_second <- df_compare %>%
-    dplyr::count(second_anno) %>%
-    dplyr::mutate(prop = n / sum(n)) %>%
-    dplyr::filter(prop < threshold) %>%
-    dplyr::pull(second_anno)
+    dplyr::count(.data[[second_anno]]) %>%
+    dplyr::mutate(prop = .data[[n]] / sum(.data[[n]])) %>%
+    dplyr::filter(.data[[prop]] < threshold) %>%
+    dplyr::pull(.data[[second_anno]])
 
   df_compare2 <- df_compare %>%
     dplyr::mutate(
@@ -167,7 +169,7 @@ plot_alluvial <- function(sce_query, first_tool, second_tool, threshold = 0.02) 
     ggplot2::labs(
          y = "Number of cells",
          title = "Comparing annotations",
-       fill = "Cell type")
+         fill = "Cell type")
 
   return(plot)
 }
