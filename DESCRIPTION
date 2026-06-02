@@ -4,7 +4,7 @@ Version: 0.99.0
 Authors@R: 
     person("Alina", "Jenn", , "alina.jenn@uni-mainz.de", role = c("aut", "cre"))
 Description: scBaptism is a tool that unifies the suitable annotation programs, leveraging one single framework (SingleCellExperiment) to store and integrate the relevant cell label information. Additionally, options for visualizations and an integration of different annotation results into one unified annotation is offered. With our tool the process of single cell annotation will be more easily accessible and require less manual input while providing the researcher with more comprehensive results through one software interface.
-License: MIT + file LICENSE
+License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
