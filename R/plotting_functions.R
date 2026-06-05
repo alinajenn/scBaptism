@@ -38,7 +38,7 @@ plot_multiple_tSNE <- function(sce_query, labels_vector) {
 
 
 
-#' plot_confusion_matrix
+#' plot_heatmap
 #'
 #'
 #' @param sce_query SingleCellExperiment object with the annotations to plot in the colData
@@ -48,7 +48,7 @@ plot_multiple_tSNE <- function(sce_query, labels_vector) {
 #' @importFrom ggplot2 ggplot aes geom_tile scale_fill_gradient labs theme_minimal
 #' @importFrom rlang .data
 #'
-#' @returns confusion matrix comparing the annotation of two selected annotation columns
+#' @returns heatmap comparing the annotation of two selected annotation columns
 #'
 #' @export
 #'
@@ -60,19 +60,19 @@ plot_multiple_tSNE <- function(sce_query, labels_vector) {
 #'
 #' #plot two of the exisiting annotations
 #'
-#' plot <- plot_confusion_matrix(sce_query = sce_annotated,
+#' plot <- plot_heatmap(sce_query = sce_annotated,
 #'                               first_tool = "labels_main",
 #'                               second_tool = "labels_fine")
 #'
 #' plot
 #'
-plot_confusion_matrix <- function(sce_query, first_tool, second_tool) {
+plot_heatmap <- function(sce_query, first_tool, second_tool) {
 
   #turn all the labels into a table
 
   anno_table <- table(sce_query[[first_tool]], sce_query[[second_tool]])
 
-  #plot the confusion matrix
+  #plot the heatmap
   plot <- as.data.frame(anno_table) |>
     ggplot2::ggplot(ggplot2::aes(x = .data[[Var2]], y = .data[[Var1]])) +
     ggplot2::geom_tile(ggplot2::aes(fill = .data[[Freq]])) +
@@ -146,18 +146,18 @@ plot_alluvial <- function(sce_query, first_tool, second_tool, threshold = 0.02) 
 
   df_compare2 <- df_compare %>%
     dplyr::mutate(
-      first_anno = ifelse(first_anno %in% filtered_first, "other", first_anno),
-      second_anno = ifelse(second_anno %in% filtered_second, "other", second_anno)
+      first_anno = ifelse(.data[[first_anno]] %in% filtered_first, "other", .data[[first_anno]]),
+      second_anno = ifelse(.data[[second_anno]] %in% filtered_second, "other", .data[[second_anno]])
     )
 
 
   df_agg <- df_compare2 %>%
-    dplyr::count(first_anno, second_anno)
+    dplyr::count(.data[[first_anno]], .data[[second_anno]])
 
 
   plot <- ggplot2::ggplot(df_agg,
-                  ggplot2::aes(axis1 = first_anno, axis2 = second_anno, y = n)) +
-    ggalluvial::geom_alluvium(ggplot2::aes(fill = first_anno)) +
+                  ggplot2::aes(axis1 = .data[[first_anno]], axis2 = .data[[second_anno]], y = .data[[n]])) +
+    ggalluvial::geom_alluvium(ggplot2::aes(fill = .data[[first_anno]])) +
     ggalluvial::geom_stratum() +
     ggplot2::geom_text(stat = ggalluvial::StatStratum,
                        ggplot2::aes(label = ggplot2::after_stat(stratum)),
