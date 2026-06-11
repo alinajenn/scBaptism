@@ -211,11 +211,11 @@ tSNE_plot <- plot_multiple_tSNE(sce_query = result,
 
 tSNE_plot
 
-matrix_plot <- plot_confusion_matrix(sce_query = result,
+heatmap_plot <- plot_heatmap(sce_query = result,
                                      first_tool = "scb_SingleR_labels",
                                      second_tool = "scb_CIA_labels")
 
-matrix_plot
+heatmap_plot
 
 alluvial_plot <- plot_alluvial(sce_query = result,
                                first_tool = "scb_SingleR_labels",
