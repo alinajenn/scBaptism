@@ -161,12 +161,12 @@
 #' @noRd
 .check_markers_list <- function(markers_list){
 
-  # check whether an provided object is a list
+  # check whether an provided object is a nested list
   if(!is.list(markers_list) & !is.null(markers_list)) {
     stop("markers_list is not a list")
 
     if (!all(vapply(markers_list, is.list, logical(1)))) {
-      stop("markers_list is not a list")
+      stop("markers_list is not a nested list")
     }
   }
 

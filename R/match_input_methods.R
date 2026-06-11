@@ -34,7 +34,7 @@
 
   #check if markers list is provided, when user selects marker-based tools
   if(is.null(markers_list) & any(anno_methods_final %in% anno_markerbased)) {
-    warning("No markers list  provided. Annotations cannot be provided without")
+    warning("No markers list provided. Annotation will be performed with selected reference-based methods only")
 
     anno_methods_final <- setdiff(anno_methods_final, anno_markerbased)
     if(length(anno_methods_final) == 0) {
