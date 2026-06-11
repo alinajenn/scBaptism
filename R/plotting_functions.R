@@ -74,8 +74,8 @@ plot_heatmap <- function(sce_query, first_tool, second_tool) {
 
   #plot the heatmap
   plot <- as.data.frame(anno_table) |>
-    ggplot2::ggplot(ggplot2::aes(x = .data[[Var2]], y = .data[[Var1]])) +
-    ggplot2::geom_tile(ggplot2::aes(fill = .data[[Freq]])) +
+    ggplot2::ggplot(ggplot2::aes(x = .data$Var2, y = .data$Var1)) +
+    ggplot2::geom_tile(ggplot2::aes(fill = .data$Freq)) +
     ggplot2::scale_fill_gradient(low = "white", high = "red") +
     ggplot2::labs(x = first_tool,
                   y = second_tool,
@@ -133,31 +133,31 @@ plot_alluvial <- function(sce_query, first_tool, second_tool, threshold = 0.02) 
     )
 
   filtered_first <- df_compare %>%
-    dplyr::count(.data[[first_anno]]) %>%
-    dplyr::mutate(prop = .data[[n]] / sum(.data[[n]])) %>%
-    dplyr::filter(.data[[prop]] < threshold) %>%
-    dplyr::pull(.data[[first_anno]])
+    dplyr::count(.data$first_anno) %>%
+    dplyr::mutate(prop = .data$n / sum(.data$n)) %>%
+    dplyr::filter(.data$prop < threshold) %>%
+    dplyr::pull(.data$first_anno)
 
   filtered_second <- df_compare %>%
-    dplyr::count(.data[[second_anno]]) %>%
-    dplyr::mutate(prop = .data[[n]] / sum(.data[[n]])) %>%
-    dplyr::filter(.data[[prop]] < threshold) %>%
-    dplyr::pull(.data[[second_anno]])
+    dplyr::count(.data$second_anno) %>%
+    dplyr::mutate(prop = .data$n / sum(.data$n)) %>%
+    dplyr::filter(.data$prop < threshold) %>%
+    dplyr::pull(.data$second_anno)
 
   df_compare2 <- df_compare %>%
     dplyr::mutate(
-      first_anno = ifelse(.data[[first_anno]] %in% filtered_first, "other", .data[[first_anno]]),
-      second_anno = ifelse(.data[[second_anno]] %in% filtered_second, "other", .data[[second_anno]])
+      first_anno = ifelse(.data$first_anno %in% filtered_first, "other", .data$first_anno),
+      second_anno = ifelse(.data$second_anno %in% filtered_second, "other", .data$second_anno)
     )
 
 
   df_agg <- df_compare2 %>%
-    dplyr::count(.data[[first_anno]], .data[[second_anno]])
+    dplyr::count(.data$first_anno, .data$second_anno)
 
 
   plot <- ggplot2::ggplot(df_agg,
-                  ggplot2::aes(axis1 = .data[[first_anno]], axis2 = .data[[second_anno]], y = .data[[n]])) +
-    ggalluvial::geom_alluvium(ggplot2::aes(fill = .data[[first_anno]])) +
+                  ggplot2::aes(axis1 = .data$first_anno, axis2 = .data$second_anno, y = .data$n)) +
+    ggalluvial::geom_alluvium(ggplot2::aes(fill = .data$first_anno)) +
     ggalluvial::geom_stratum() +
     ggplot2::geom_text(stat = ggalluvial::StatStratum,
                        ggplot2::aes(label = ggplot2::after_stat(stratum)),
