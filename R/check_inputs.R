@@ -56,7 +56,7 @@
   #is it characters?
 
   if(!is.character(anno_methods)){
-    stop("anno_methods needs to be a characters or a vector of characters")
+    stop("anno_methods needs to be a character or a vector of characters")
   }
 
   #are all the provided methods valid?
