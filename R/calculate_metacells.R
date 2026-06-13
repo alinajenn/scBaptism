@@ -64,7 +64,7 @@ calculate_metacells <- function(sce_query,
 
   #add the annotation to SCE, if provided
 
-  if (is.null(annotation_col)) {
+  if (!is.null(annotation_col)) {
     SummarizedExperiment::colData(sce_metacells)$annotation <- mc_identity$SC.cell.annotation.
   }
 
