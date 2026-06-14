@@ -94,7 +94,7 @@
 #'
 #' @param sce_query SingleCellExperiment object with multiple annotations
 #' @param anno_columns Vector with names of annotation columns, if NULL all columns starting with "scb" will be used
-#' @param tie_breaker choose what happens with a tie between the annotations, options are "na" and "first", default is "na"
+#' @param tie_breaker choose what happens with a tie between the annotations, options are "concat", "LCA", "na" and "first"
 #'
 #' @importFrom SummarizedExperiment colData
 #' @importFrom dplyr mutate
