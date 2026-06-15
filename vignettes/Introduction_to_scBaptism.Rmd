@@ -254,13 +254,28 @@ scater::plotTSNE(result_mv, color_by = "scb_majority_labels")
 
 Another way to gain different insights into your data is to agglomerate your single cell data into so-called metacells.
 
-Metacells typically capture the expression data of around 10 to 50 single cells. This is a way to reduce noise in your data and also work with a smaller data set. In the scBaptism package, you can turn your single cell level data into metacells data by simply calling the calculate_metacells() function. This returns a SingleCellExperiment object for you with a gene expression matrix of log counts that represent Meta-cells. Additionally, PCA, T, S, and E, and clusters are also calculated for further usage. The function takes two parameters: The first is simply your query data in the form of a SingleCellExperiment object. The second parameter gamma decides the graining level. A graining level of 10 would mean that 10 single cells get combined into one metacell.
+Metacells typically capture the expression data of around 10 to 50 single cells. This is a way to reduce noise in your data and also work with a smaller data set. In the scBaptism package, you can turn your single cell level data into metacells data by simply calling the calculate_metacells() function. This returns a SingleCellExperiment object for you with a gene expression matrix of log counts that represent Meta-cells. Additionally, PCA, t-SNE, and clusters are also calculated for further usage. The function takes four parameters: The first is simply your query data in the form of a SingleCellExperiment object. The second parameter gamma decides the graining level. A graining level of 10 would mean that 10 single cells get combined into one metacell. The n.pc parameter decides how many of the principal components are used to build the underlying kNN graph for the metacell partition. (The default of using the first 10 principal components used should lead to decent results in most cases).
+
+If the sce_query already contains an annotation, it is possible to transfer this to the metacell level. This can result in a slightly higher number of metacells since metacells that would contain mixed annotations are split up into smaller ones to make sure each metacell only consists of one cell type. In order to transfer the annotation, simply set the annotation_col argument to an annotation that is saved in the colData of your sce_query.
 
 ```{r metacells}
+# transforming an SCE into a metacell level SCE, without transferring an existing annotation
 sce_metacells <- calculate_metacells(sce_query = sce_example,
-                                     gamma = 10)
+                                     annotation_col = NULL,
+                                     gamma = 10,
+                                     n.pc = 10,
+                                     )
 
 sce_metacells
+
+#same metacell transformation, but this time the existing annotation is transferred
+#number of resulting metacells can be higher then in example before
+sce_anno_metacells <- calculate_metacells(sce_query = sce_example,
+                                     annotation_col = "labels_main",
+                                     gamma = 10,
+                                     n.pc = 10,
+                                     )
+sce_anno_metacells
 ```
 
 The function returns to you a SingleCellExperiment object with log counts. These log counts were calculated by averaging the expression data of each single cell contained in the meta-cell. Additionally, PCA, tSNE and clusters were calculated.
