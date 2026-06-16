@@ -86,8 +86,6 @@ run_Seurat <- function(sce_query,
   Seurat::Idents(seurat_ref) <- colData(reference)[[ref_labs]]
 
   # run annotation---------------------------------------------------------
-  seurat_query <- Seurat::FindVariableFeatures(object = seurat_query)
-  seurat_ref <- Seurat::FindVariableFeatures(object = seurat_ref)
 
   anchors <- Seurat::FindTransferAnchors(reference = seurat_ref,
                                          query = seurat_query,
