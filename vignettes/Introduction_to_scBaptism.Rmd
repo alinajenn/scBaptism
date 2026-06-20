@@ -263,7 +263,7 @@ If the sce_query already contains an annotation, it is possible to transfer this
 sce_metacells <- calculate_metacells(sce_query = sce_example,
                                      annotation_col = NULL,
                                      gamma = 10,
-                                     n.pc = 10,
+                                     n.pc = 10
                                      )
 
 sce_metacells
@@ -273,7 +273,7 @@ sce_metacells
 sce_anno_metacells <- calculate_metacells(sce_query = sce_example,
                                      annotation_col = "labels_main",
                                      gamma = 10,
-                                     n.pc = 10,
+                                     n.pc = 10
                                      )
 sce_anno_metacells
 ```
