@@ -74,6 +74,7 @@
     cand_cl <- c(cand_cl, obo_ids[1])
   }
 
+
   cand_cl <- unique(stats::na.omit(cand_cl))
   cand_cl <- cand_cl[cand_cl %in% igraph::V(graph)$name]
 
