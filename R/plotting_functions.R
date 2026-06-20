@@ -79,7 +79,7 @@ plot_heatmap <- function(sce_query, first_tool, second_tool) {
     ggplot2::scale_fill_gradient(low = "white", high = "red") +
     ggplot2::labs(x = first_tool,
                   y = second_tool,
-                  title = "Comparing annotations",
+                  title = "Heatmap comparing two annotation results",
                   fill = "Number of cells") +
     ggplot2::theme_minimal()
 
@@ -164,12 +164,18 @@ plot_alluvial <- function(sce_query, first_tool, second_tool, threshold = 0.02) 
                        size = 2.5) +
     cowplot::theme_minimal_hgrid() +
     ggplot2::theme(axis.title.x= ggplot2::element_blank(),
-                  axis.text.x= ggplot2::element_blank(),
+                  #axis.text.x= ggplot2::element_blank(),
                   axis.ticks.x= ggplot2::element_blank()) +
     ggplot2::labs(
          y = "Number of cells",
-         title = "Comparing annotations",
-         fill = "Cell type")
+         title = "Alluvial plot comparing two annotations",
+         fill = "Cell type") +
+    scale_x_continuous(
+      breaks = c(1, 2),                     # positions of the two axes
+      labels = c(first_tool,       # label for axis 1
+                 second_tool)     # label for axis 2
+    )
+
 
   return(plot)
 }
