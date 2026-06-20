@@ -117,7 +117,7 @@ run_CelliDmk <- function(sce_query,
 
 
   #message("CelliD annotation done")
-  if(verbose) message("CelliD annotation done")
+  if(verbose) message("CelliD (marker based) annotation done")
 
   return(sce_query)
 

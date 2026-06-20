@@ -120,7 +120,7 @@ run_CelliDref <- function(sce_query,
 
 
   # message("CelliD annotation done")
-  if(verbose) message("CelliD annotation done")
+  if(verbose) message("CelliD (reference based) annotation done")
 
   return(sce_query)
 
