@@ -25,7 +25,7 @@
   }
 
   if(!("counts" %in% names(SummarizedExperiment::assays(sce_query)))) {
-    stop("Query: no assay called 'counts' found. Rename your assay or add the counts")
+    message("Query: no assay called 'counts' found. Rename your assay or add the counts. Ignore if annotating metacells")
   }
 
   if(!("logcounts" %in% names(SummarizedExperiment::assays(sce_query)))) {
