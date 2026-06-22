@@ -1,0 +1,282 @@
+---
+title: "PBMC3k workflow to test the whole package"
+output: html_document
+date: "2026-06-19"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Load all neccessary libraries
+```{r libraries}
+library(scBaptism)
+library(iUSEiSEE)
+library(Seurat)
+library(dplyr)
+library(cowplot)
+
+```
+
+
+## Load PBMC3k dataset in SCE format with main preprocessing steps already done (log-normalization, clustering, t-SNE, PCA)
+```{r load SCE}
+sce_query <- readRDS(file = system.file("datasets", 
+                                        "sce_pbmc3k.RDS", 
+                                        package = "iUSEiSEE"))
+
+```
+
+## The labels_main annotation from the example SCE will serve as a reference
+
+From this reference the list of marker genes is build with the Seurat package
+
+
+```{r }
+
+#reference
+ref <- sce_query
+
+#markers list
+myseu <- Seurat::as.Seurat(sce_query)
+myseu <- Seurat::ScaleData(myseu)
+Seurat::Idents(myseu) <- "labels_main"
+seu_all_markers <- Seurat::FindAllMarkers(myseu, 
+                                          test.use = "wilcox", 
+                                          only.pos = TRUE,
+                                          min.pct = 0.25, 
+                                          logfc.threshold = 0.25)
+
+top_k_markers <- 50
+
+markers_lists <- seu_all_markers %>%
+  dplyr::group_by(cluster) %>%
+  dplyr::top_n(n = top_k_markers, wt = avg_log2FC)
+
+markers <- split(markers_lists$gene, markers_lists$cluster)
+
+
+```
+
+## Annotate the data set with all methods included in scBaptism
+
+```{r}
+anno_result <- run_scBaptism(sce_query = sce_query,
+                            anno_methods = c("SingleR", 
+                                             "Seurat", 
+                                             "clustifyr", 
+                                             "scPred", 
+                                             "scClassify", 
+                                             "scmap", 
+                                             "CelliDref", 
+                                             "CIA", 
+                                             "SCINA", 
+                                             "CelliDmk"),
+                             reference = ref,
+                             ref_labs = "labels_main",
+                             markers_list = markers,
+                             clusters = "Cluster")
+
+
+```
+
+
+## plotting with integrated visualizations
+
+Plotting of heatmap and alluvial is only done against SingleR for all tools, 
+to not end up with an excessive amount of tools
+
+```{r}
+
+#plot all annotations as t-SNE plot, plus the reference annotation
+tSNE_plot <- plot_multiple_tSNE(sce_query = anno_result,
+                               labels_vector = c("scb_SingleR_labels", 
+                                                 "scb_CIA_labels", 
+                                                 "scb_Seurat_labels",
+                                                 "scb_clustifyr_labels",
+                                                 "scb_scPred_labels",
+                                                 "scb_scClassify_labels",
+                                                 "scb_scmap_labels",
+                                                 "scb_SCINA_labels",
+                                                 "scb_CelliDref_labels",
+                                                 "scb_CelliDmk_labels",
+                                                 "labels_main"))
+
+tSNE_plot
+
+
+#vector with all annotations, except SingleR, so all can be plotted against it
+labels_vector = c(
+                     "scb_CIA_labels", 
+                     "scb_Seurat_labels",
+                     "scb_clustifyr_labels",
+                     "scb_scPred_labels",
+                     "scb_scClassify_labels",
+                     "scb_scmap_labels",
+                     "scb_SCINA_labels",
+                     "scb_CelliDref_labels",
+                     "scb_CelliDmk_labels")
+
+# plot heatmaps exemplary for SingleR against all other cell annotations
+
+heatmap_list <- lapply(labels_vector, function(arg){plot_heatmap(sce_query = anno_result,first_tool = "scb_SingleR_labels", second_tool = arg)})
+
+
+heatmap_plot2 <- cowplot::plot_grid(plotlist = heatmap_list, nrow = 4, ncol = 2)
+
+
+
+# plot alluvial plots exemplary for SingleR against all other cell annotations
+
+
+alluvial_list <- lapply(labels_vector, function(arg){plot_alluvial(sce_query = anno_result,first_tool = "scb_SingleR_labels", second_tool = arg, threshold = 0.02)})
+
+#display all plots in one graphic
+alluvial_plot <- cowplot::plot_grid(plotlist = alluvial_list, nrow = 4, ncol = 2)
+
+
+#demonstrate filtering, at 2% and 10 %
+thresholds <- c(0.02, 0.1)
+
+alluvial_list_filter <- lapply(thresholds, function(arg){plot_alluvial(sce_query = anno_result,first_tool = "scb_SingleR_labels", second_tool = "scb_scPred_labels", threshold = arg)})
+
+alluvial_plot_filter <- cowplot::plot_grid(plotlist = alluvial_list_filter, ncol = 2)
+```
+
+
+#perform majority voting
+#with all tie breakers and plot against the reference annotation
+
+```{r}
+#perform majority voting with all tie breaker options
+
+result_all <- anno_result
+
+result_first <- majority_vote(sce_query = anno_result, 
+                           anno_columns = NULL, 
+                           tie_breaker = "first")
+
+#rename column to avoid confusion later on
+names(SummarizedExperiment::colData(result_first))[which(names(SummarizedExperiment::colData(result_first))=="scb_majority_labels")]="mv_first"
+
+result_LCA <- majority_vote(sce_query = anno_result, 
+                           anno_columns = c("scb_SingleR_labels",
+                                            "scb_Seurat_labels",
+                                            "scb_clustifyr_labels", 
+                                            "scb_scPred_labels",
+                                            "scb_scClassify_labels",
+                                            "scb_scmap_labels",
+                                            "scb_CelliDref_labels", 
+                                            "scb_CIA_labels",
+                                            "scb_SCINA_labels",
+                                            "scb_CelliDmk_labels"), 
+                           tie_breaker = "LCA")
+
+names(SummarizedExperiment::colData(result_LCA))[which(names(SummarizedExperiment::colData(result_LCA))=="scb_majority_labels")]="mv_LCA"
+
+result_concat <- majority_vote(sce_query = anno_result, 
+                           anno_columns = NULL, 
+                           tie_breaker = "concat")
+
+names(SummarizedExperiment::colData(result_concat))[which(names(SummarizedExperiment::colData(result_concat))=="scb_majority_labels")]="mv_concat"
+
+result_na <- majority_vote(sce_query = anno_result, 
+                           anno_columns = NULL, 
+                           tie_breaker = "na")
+
+names(SummarizedExperiment::colData(result_na))[which(names(SummarizedExperiment::colData(result_na))=="scb_majority_labels")]="mv_na"
+
+
+
+SummarizedExperiment::colData(result_all)$mv_first <- result_first$mv_first
+SummarizedExperiment::colData(result_all)$mv_LCA <- result_LCA$mv_LCA
+SummarizedExperiment::colData(result_all)$mv_concat <- result_concat$mv_concat
+SummarizedExperiment::colData(result_all)$mv_na <- result_na$mv_na
+
+```
+
+
+##Metacells
+
+#first: convert the example SCE into Metacells and then annotate it again
+
+#second: Take existing annotation and take it along with the Metacell
+
+```{r}
+# convert SCE into metacells, then annotate it again
+#graining levels tested: 10 , 20 and 30
+
+metacells_ten <- calculate_metacells(sce_query = anno_result,
+                                     annotation_col = NULL,
+                                     gamma = 10,
+                                     n.pc = 10
+                                     )
+
+metacells_twenty <- calculate_metacells(sce_query = anno_result,
+                                     annotation_col = NULL,
+                                     gamma = 20,
+                                     n.pc = 10
+                                     )
+
+metacells_thirty <- calculate_metacells(sce_query = anno_result,
+                                     annotation_col = NULL,
+                                     gamma = 30,
+                                     n.pc = 10
+                                     )
+
+
+#annotate the objects with SingleR and CIA as an example
+
+metacells_ten <- run_scBaptism(sce_query = metacells_ten, 
+                               anno_methods = c("SingleR", "CIA"), 
+                               reference = ref,
+                               ref_labs = "labels_main",
+                               markers_list = markers)
+
+metacells_twenty <- run_scBaptism(sce_query = metacells_twenty, 
+                               anno_methods = c("SingleR", "CIA"), 
+                               reference = ref, 
+                               ref_labs = "labels_main",
+                               markers_list = markers)
+
+metacells_thirty <- run_scBaptism(sce_query = metacells_thirty, 
+                               anno_methods = c("SingleR", "CIA"), 
+                               reference = ref,
+                               ref_labs = "labels_main",
+                               markers_list = markers)
+
+```
+
+```{r metecells with annotation}
+#now lets try to make metacells and take along the existing annotation from our anno_results
+metacells_ten_anno <- calculate_metacells(sce_query = anno_result,
+                                     annotation_col = "scb_SingleR_labels",
+                                     gamma = 10,
+                                     n.pc = 10
+                                     )
+
+metacells_twenty_anno <- calculate_metacells(sce_query = anno_result,
+                                     annotation_col = "scb_SingleR_labels",
+                                     gamma = 20,
+                                     n.pc = 10
+                                     )
+
+metacells_thirty_anno <- calculate_metacells(sce_query = anno_result,
+                                     annotation_col = "scb_SingleR_labels",
+                                     gamma = 30,
+                                     n.pc = 10
+                                     )
+
+```
+
+## Plotting Majority voting and metacells
+```{r}
+#metacells: graining levels with annotation transferred
+
+sce_vector <- c(metacells_ten_anno, metacells_twenty_anno, metacells_thirty_anno)
+
+MCafter_list <- lapply(sce_vector, function(arg){scater::plotTSNE(object = arg, color_by = "scb_SingleR_labels")})
+
+#display all plots in one graphic
+MCafter_plot <- cowplot::plot_grid(plotlist = MCafter_list, ncol = 3, labels = c("Graining level 10", "Graining level 30", "Graining level 30"))
+```
+
