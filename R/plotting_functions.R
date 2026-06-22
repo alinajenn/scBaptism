@@ -170,7 +170,7 @@ plot_alluvial <- function(sce_query, first_tool, second_tool, threshold = 0.02) 
          y = "Number of cells",
          title = "Alluvial plot comparing two annotations",
          fill = "Cell type") +
-    scale_x_continuous(
+    ggplot2::scale_x_continuous(
       breaks = c(1, 2),                     # positions of the two axes
       labels = c(first_tool,       # label for axis 1
                  second_tool)     # label for axis 2
