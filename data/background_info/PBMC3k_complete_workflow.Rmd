@@ -273,9 +273,21 @@ metacells_thirty_anno <- calculate_metacells(sce_query = anno_result,
 ## plotting majority voting
 
 ```{r majority voting}
-#plot as alluvial against the reference annotation
+#plot as alluvial against the reference annotation for first and na tie breaker, without filtering
+mv_vec <- c("mv_first", "mv_na")
+
+MV_list <- lapply(mv_vec, function(arg){plot_alluvial(sce_query = result_all, first_tool = arg, second_tool = "labels_main", threshold = 0)})
+
+#display all plots in one graphic
+MV_plot <- cowplot::plot_grid(plotlist = MV_list, ncol = 2, labels = c("First annotation for ties", "NA for ties"))
+
+#plot the t-SNE
 
 
+
+
+
+# plot concat tie breaker as heatmap
 mv_list <- c("mv_first", "mv_concat", "mv_na")
 
 MV_list <- lapply(mv_list, function(arg){plot_alluvial(sce_query = result_all, first_tool = arg, second_tool = "labels_main", threshold = 0)})
@@ -308,5 +320,17 @@ MCafter_list <- lapply(sce_list_after, function(arg){scater::plotTSNE(object = a
 
 #display all plots in one graphic
 MCafter_plot <- cowplot::plot_grid(plotlist = MCafter_list, ncol = 3, labels = c("Graining level 10", "Graining level 30", "Graining level 30"))
+
+#plotting metacells 30 with all possible annotations
+
+mc_vector = c("scb_SingleR_labels",
+              "scb_clustifyr_labels", 
+              "scb_scClassify_labels",
+              "scb_scmap_labels",
+              "scb_CIA_labels",
+              "scb_SCINA_labels",
+              "scb_CelliDmk_labels")
+
+MCall_plot <- plot_multiple_tSNE(sce_query = metacell_anno, mc_vector)
 ```
 
