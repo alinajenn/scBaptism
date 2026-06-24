@@ -161,7 +161,7 @@ anno_methods = c("SingleR", "Seurat", "clustifyr", "scPred", "scClassify", "scma
 
 The return object is your SCE query with the annotation columns added to the colData. All new annotation columns are named following this scheme: "scb_toolname_labels". "scb" stand for scBaptism, so you can easily identify which columns are a result of running run_scBaptism.
 
-[Important Note: Currently all packages that use the Seurat function ScaleData() (Seurat, scPred, CelliDref) take a very long time to run (30+ mins). This is an internal issue with the Seurat package. We did make the developers aware of this issue and asked them to fix it, but it could take some time until it happens. So maybe skip these tools, if you don´t want to wait forever]
+[Important Note: Currently all packages that use the Seurat function ScaleData() (Seurat, scPred, CelliDref) take a very long time to run (1+ h). This is an internal issue with the Seurat package. We did make the developers aware of this issue and asked them to fix it, but it could take some time until it happens.You can install a fix for this by yourself from here (https://github.com/satijalab/seurat/pull/10161). Or maybe skip these tools, if you don´t want to wait forever]
 
 ## 6 Configure additional parameters
 
