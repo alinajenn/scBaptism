@@ -83,12 +83,9 @@ plot_heatmap <- function(sce_query, first_tool, second_tool) {
                   fill = "Number of cells") +
     ggplot2::theme_minimal()
 
-
 return(plot)
 
 }
-
-
 
 #' plot_alluvial
 #'
