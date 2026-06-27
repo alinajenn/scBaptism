@@ -40,5 +40,11 @@ Suggests:
     rmarkdown,
     iUSEiSEE,
     testthat (>= 3.0.0)
+biocViews: 
+    Software,
+    SingleCell, 
+    Transcriptomics, 
+    Classification, 
+    Annotation
 VignetteBuilder: knitr
 Config/testthat/edition: 3
