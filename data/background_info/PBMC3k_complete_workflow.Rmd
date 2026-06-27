@@ -281,20 +281,34 @@ MV_list <- lapply(mv_vec, function(arg){plot_alluvial(sce_query = result_all, fi
 #display all plots in one graphic
 MV_plot <- cowplot::plot_grid(plotlist = MV_list, ncol = 2, labels = c("First annotation for ties", "NA for ties"))
 
-#plot the t-SNE
 
 
+# plot concat tie breaker as heatmap against reference
+#with pseudo log transformation to make the color scale more sensitive for small values
 
+plot_heatmap_pseudo <- function(sce_query, first_tool, second_tool, pseudo_log = FALSE) {
 
+  #turn all the labels into a table
 
-# plot concat tie breaker as heatmap
-mv_list <- c("mv_first", "mv_concat", "mv_na")
+  anno_table <- table(sce_query[[first_tool]], sce_query[[second_tool]])
 
-MV_list <- lapply(mv_list, function(arg){plot_alluvial(sce_query = result_all, first_tool = arg, second_tool = "labels_main", threshold = 0)})
+  #plot the heatmap
+  plot <- as.data.frame(anno_table) |>
+    ggplot2::ggplot(ggplot2::aes(x = .data$Var2, y = .data$Var1)) +
+    ggplot2::geom_tile(ggplot2::aes(fill = .data$Freq)) +
+    if(pseudo_log)
+    ggplot2::scale_fill_gradient(low = "white", high = "red", trans = pseudo_log_trans(base = 10, sigma = 0.01)) +
+    ggplot2::labs(x = first_tool,
+                  y = second_tool,
+                  title = "Heatmap comparing two annotation results",
+                  fill = "Number of cells") +
+    ggplot2::theme_minimal()
 
-#display all plots in one graphic
-MV_plot <- cowplot::plot_grid(plotlist = MV_list, ncol = 3, labels = c("First annotation", "Concatenation", "NA"))
+return(plot)
 
+}
+
+concat_heatmap <- plot_heatmap_pseudo(sce_query = result_all, first_tool = "mv_concat", second_tool = "labels_main")
 
 ```
 
