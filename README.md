@@ -13,11 +13,11 @@ Single Cell transcriptomic data can be used to identify different cells inside a
 
 ## Install the package
 
-You can install the development scBaptism directly from github:
+You can install scBaptism directly from github:
 
 ``` r
-#development version
-remotes::install_github("alinajenn/scBaptism@run_anno_tools")
+#install scBaptism
+remotes::install_github("alinajenn/scBaptism")
 ```
 
 ## Load the package
