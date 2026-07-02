@@ -57,35 +57,53 @@
 #' @noRd
 #'
 #'
+#'
 .tiebreaker_LCA <- function(candidates, graph) {
+  suppressWarnings({
+    if (is.null(candidates) || !is.character(candidates) || length(candidates) == 0) {
+      return(NULL)
+    }
 
-  cand_cl <- c()
+    cand_cl <- c()
 
-  # mapping to CL using rols
-  for (cand in candidates) {
-    res <- rols::OlsSearch(cand, ontology = "CL")
-    hits <- rols::olsSearch(res, all = FALSE)
+    for (cand in candidates) {
+      if (is.na(cand) || nchar(trimws(cand)) == 0) next
 
-    obo_ids <- hits@response[["obo_id"]]
-    obo_ids <- obo_ids[grepl("^CL[:_]", obo_ids)]
+      tryCatch({
+        res  <- OlsSearch(cand, ontology = "CL")
+        hits <- olsSearch(res, all = FALSE)
+        obo_ids <- hits@response[["obo_id"]]
+        obo_ids <- obo_ids[grepl("^CL[:_]", obo_ids)]
+        if (length(obo_ids) == 0) next
+        cand_cl <- c(cand_cl, obo_ids[1])
+      }, error = function(e) NULL)
+    }
 
-    if (length(obo_ids) == 0) next
+    cand_cl <- unique(na.omit(cand_cl))
+    cand_cl <- cand_cl[cand_cl %in% V(graph)$name]
 
-    cand_cl <- c(cand_cl, obo_ids[1])
-  }
+    if (length(cand_cl) < 2) return(NULL)
 
+    lca <- tryCatch(
+      findCommonAncestors(cand_cl, g = graph),
+      error = function(e) NULL
+    )
 
-  cand_cl <- unique(stats::na.omit(cand_cl))
-  cand_cl <- cand_cl[cand_cl %in% igraph::V(graph)$name]
+    if (is.null(lca) || length(lca@rownames) == 0 || length(lca@rownames[[1]]) == 0) {
+      return(NULL)
+    }
 
-  lca <- ontoProc::findCommonAncestors(cand_cl, g = graph)
-  lca <- lca@rownames[[1]]
+    lca_id <- lca@rownames[[1]]
+    if (is.na(lca_id) || nchar(trimws(lca_id)) == 0) return(NULL)
 
-  lca_res <- rols::OlsSearch(lca, ontology = "CL")
-  lca_hit <- rols::olsSearch(lca_res, all = FALSE)
-  lca_label <- lca_hit@response[["label"]][[1]]
+    lca_label <- tryCatch({
+      lca_res <- OlsSearch(lca_id, ontology = "CL")
+      lca_hit <- olsSearch(lca_res, all = FALSE)
+      lca_hit@response[["label"]][[1]]
+    }, error = function(e) NULL)
 
-  return(lca_label)
+    return(lca_label)
+  })
 }
 
 
