@@ -4,7 +4,8 @@ test_that("main function works", {
                                anno_methods = c("SingleR", "CIA"),
                                markers_list = markers_lists,
                                reference = sce_annotated,
-                               ref_labs = "labels_main")
+                               ref_labs = "labels_main",
+                               clusters = "Cluster")
 
   expect_s4_class(anno_result, "SingleCellExperiment")
   expect_true(all(c("scb_SingleR_labels", "scb_CIA_labels") %in% names(colData(anno_result))))
@@ -28,7 +29,7 @@ test_that("main function works", {
 
 
 
-test_that("triggering diverse errors", {
+test_that("triggering errors from checks", {
   expect_error(run_scBaptism(sce_query = sce_annotated,
                              anno_methods = c("SingleR"),
                              markers_list = sce_annotated,
@@ -43,6 +44,20 @@ test_that("triggering diverse errors", {
                              ref_labs = "labels_main"),
                regexp = "SingleCellExperiment")
 
+
+  expect_error(run_scBaptism(sce_query = markers_lists,
+                             anno_methods = c("CIA"),
+                             markers_list = markers_lists,
+                             reference = sce_annotated,
+                             ref_labs = "labels_main"),
+               regexp = "SingleCellExperiment")
+
+  expect_error(run_scBaptism(sce_query = markers_lists,
+                             anno_methods = c("SingleR"),
+                             markers_list = markers_lists,
+                             reference = NULL,
+                             ref_labs = "labels_main"),
+               regexp = "SingleCellExperiment")
 })
 
 
