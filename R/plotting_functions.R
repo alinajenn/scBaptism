@@ -77,8 +77,8 @@ plot_heatmap <- function(sce_query, first_tool, second_tool) {
     ggplot2::ggplot(ggplot2::aes(x = .data$Var2, y = .data$Var1)) +
     ggplot2::geom_tile(ggplot2::aes(fill = .data$Freq)) +
     ggplot2::scale_fill_gradient(low = "white", high = "red") +
-    ggplot2::labs(x = first_tool,
-                  y = second_tool,
+    ggplot2::labs(x = second_tool,
+                  y = first_tool,
                   title = "Heatmap comparing two annotation results",
                   fill = "Number of cells") +
     ggplot2::theme_minimal()
