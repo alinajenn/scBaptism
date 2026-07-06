@@ -118,7 +118,7 @@ labels_vector = c(
 
 # plot heatmaps exemplary for SingleR against all other cell annotations
 
-heatmap_list <- lapply(labels_vector, function(arg){plot_heatmap(sce_query = anno_result,first_tool = arg, second_tool = "scb_SingleR_labels")})
+heatmap_list <- lapply(labels_vector, function(arg){plot_heatmap(sce_query = anno_result,first_tool = "scb_SingleR_labels", second_tool = arg)})
 
 
 heatmap_plot2 <- cowplot::plot_grid(plotlist = heatmap_list, nrow = 4, ncol = 2)
