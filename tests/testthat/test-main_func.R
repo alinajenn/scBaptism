@@ -1,14 +1,14 @@
 test_that("main function works", {
   # run scBaptism to annotate with SingleR and CIA
   anno_result <- run_scBaptism(sce_query = sce_annotated,
-                               anno_methods = c("SingleR", "CIA"),
+                               anno_methods = c("SingleR", "Seurat", "clustifyr", "scPred", "scClassify", "scmap", "CelliDref", "CIA", "SCINA", "CelliDmk"),
                                markers_list = markers_lists,
                                reference = sce_annotated,
                                ref_labs = "labels_main",
                                clusters = "Cluster")
 
   expect_s4_class(anno_result, "SingleCellExperiment")
-  expect_true(all(c("scb_SingleR_labels", "scb_CIA_labels") %in% names(colData(anno_result))))
+  expect_true(all(c("scb_SingleR_labels", "scb_CIA_labels", "scb_Seurat_labels", "scb_clustifyr_labels", "scb_scClassify_labels", "scb_scmap_labels", "scb_CelliDref_labels", "scb_SCINA_labels", "scb_CelliDmk_labels") %in% names(colData(anno_result))))
 
   expect_message(run_scBaptism(sce_query = sce_annotated,
                                anno_methods = c("CIA"),
